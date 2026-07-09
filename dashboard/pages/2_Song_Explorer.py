@@ -17,11 +17,6 @@ songs, artists, genres, years, songs_with_genres = load_data()
 
 # Cached functions for performance
 @st.cache_data
-def get_artist_list(df):
-    """Get sorted unique artist list with caching."""
-    return sorted(df["artists"].dropna().unique())
-
-@st.cache_data
 def convert_csv(df):
     """Convert dataframe to CSV with caching."""
     return df.to_csv(index=False).encode("utf-8")
@@ -52,12 +47,11 @@ with col1:
     )
 
 with col2:
-    # Artist Dropdown - using cached function
-    artist_list = get_artist_list(songs)
-    selected_artist = st.selectbox(
-        "🎤 Artist",
-        ["All"] + artist_list,
-        help="Filter songs by a specific artist"
+    # Artist Search - using text_input for better performance with large datasets
+    artist_search = st.text_input(
+        "🎤 Search Artist",
+        placeholder="Type an artist name...",
+        help="Search for artists (case-insensitive, partial matches supported)"
     )
 
 # Row 2: Year and Popularity Sliders
@@ -105,10 +99,11 @@ if search:
         .str.contains(search, case=False, na=False)
     ]
 
-# 2. Artist filter
-if selected_artist != "All":
+# 2. Artist filter - using text search
+if artist_search:
     filtered = filtered[
-        filtered["artists"] == selected_artist
+        filtered["artists"]
+        .str.contains(artist_search, case=False, na=False)
     ]
 
 # 3. Year range filter
@@ -233,7 +228,7 @@ with col_download2:
 st.markdown("---")
 with st.expander("🔍 Current Filter Summary"):
     st.write(f"**Search Term:** {search if search else 'None'}")
-    st.write(f"**Artist:** {selected_artist}")
+    st.write(f"**Artist Search:** {artist_search if artist_search else 'None'}")
     st.write(f"**Year Range:** {year_range[0]} - {year_range[1]}")
     st.write(f"**Popularity Range:** {popularity[0]} - {popularity[1]}")
     st.write(f"**Explicit Content:** {explicit}")
