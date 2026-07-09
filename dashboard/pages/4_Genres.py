@@ -4,18 +4,233 @@ import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
+from pathlib import Path
+from PIL import Image
+import base64
 
 from data_loader import load_data
 
+# -----------------------------
 # Page Configuration
-st.set_page_config(
-    page_title="Genre Analytics",
-    page_icon="🎸",
-    layout="wide"
-)
+# -----------------------------
 
+# Load logo for favicon
+logo_path = Path(__file__).parent.parent / "assets" / "spotify_logo.png"
+if logo_path.exists():
+    try:
+        favicon = Image.open(logo_path)
+        st.set_page_config(
+            page_title="Genre Analytics • Spotify Music Intelligence",
+            page_icon=favicon,
+            layout="wide",
+            initial_sidebar_state="expanded"
+        )
+    except:
+        st.set_page_config(
+            page_title="Genre Analytics • Spotify Music Intelligence",
+            page_icon="🎸",
+            layout="wide",
+            initial_sidebar_state="expanded"
+        )
+else:
+    st.set_page_config(
+        page_title="Genre Analytics • Spotify Music Intelligence",
+        page_icon="🎸",
+        layout="wide",
+        initial_sidebar_state="expanded"
+    )
+
+# -----------------------------
 # Load Data
+# -----------------------------
+
 songs, artists, genres, years, songs_with_genres = load_data()
+
+# -----------------------------
+# Load Custom CSS
+# -----------------------------
+
+def load_css():
+    css_file = Path(__file__).parent.parent / "assets" / "styles.css"
+    if css_file.exists():
+        with open(css_file) as f:
+            st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+    else:
+        st.markdown("""
+        <style>
+        /* Hide Streamlit branding */
+        #MainMenu {visibility: hidden;}
+        footer {visibility: hidden;}
+        header {visibility: hidden;}
+        
+        /* Import Inter font */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        
+        /* Global styles */
+        html, body, [class*="css"] {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+        }
+        
+        /* Main container */
+        .main > div {
+            padding: 0.5rem 2rem 1rem 2rem !important;
+            max-width: 1400px !important;
+            margin: 0 auto !important;
+        }
+        
+        /* Hero Title */
+        div.hero-title {
+            font-size: 76px !important;
+            font-weight: 900 !important;
+            color: #FFFFFF !important;
+            letter-spacing: -3px !important;
+            line-height: 1 !important;
+            margin-bottom: 4px !important;
+        }
+        
+        div.hero-subtitle {
+            font-size: 22px !important;
+            color: #E8D5C0 !important;
+            font-weight: 400 !important;
+            margin-top: 4px !important;
+            letter-spacing: -0.3px !important;
+        }
+        
+        /* Section Title */
+        div.section-title {
+            font-size: 34px !important;
+            font-weight: 800 !important;
+            color: #FFFFFF !important;
+            margin-bottom: 24px !important;
+            letter-spacing: 1px !important;
+            text-transform: uppercase !important;
+        }
+        
+        /* KPI Cards - Dark for orange theme */
+        div.kpi-card {
+            background: rgba(30, 25, 20, 0.92) !important;
+            border-radius: 18px !important;
+            padding: 20px 24px !important;
+            border: 1px solid rgba(255, 255, 255, 0.04) !important;
+            transition: all 0.25s ease !important;
+        }
+        
+        div.kpi-card:hover {
+            border-color: #1DB954 !important;
+            transform: translateY(-4px) !important;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5) !important;
+        }
+        
+        div.kpi-value {
+            font-size: 48px !important;
+            font-weight: 900 !important;
+            color: #FFFFFF !important;
+            margin: 8px 0 4px 0 !important;
+            letter-spacing: -2px !important;
+            line-height: 1.1 !important;
+        }
+        
+        div.kpi-label {
+            font-size: 14px !important;
+            color: #B3B3B3 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.8px !important;
+            font-weight: 600 !important;
+        }
+        
+        div.kpi-delta {
+            font-size: 0.85rem !important;
+            color: #1DB954 !important;
+            font-weight: 500 !important;
+        }
+        
+        /* Chart container - Dark for orange theme */
+        div.chart-card {
+            background: rgba(30, 25, 20, 0.92) !important;
+            border-radius: 18px !important;
+            padding: 24px !important;
+            border: 1px solid rgba(255, 255, 255, 0.04) !important;
+            margin-bottom: 16px !important;
+            transition: all 0.25s ease !important;
+        }
+        
+        div.chart-card:hover {
+            border-color: rgba(255, 255, 255, 0.1) !important;
+        }
+        
+        /* Table card for insights */
+        div.table-card {
+            background: rgba(30, 25, 20, 0.92) !important;
+            border-radius: 18px !important;
+            padding: 24px !important;
+            border: 1px solid rgba(255, 255, 255, 0.04) !important;
+            margin-bottom: 16px !important;
+            transition: all 0.25s ease !important;
+            height: 100%;
+        }
+        
+        div.table-card:hover {
+            border-color: rgba(255, 255, 255, 0.1) !important;
+            transform: translateY(-2px) !important;
+        }
+        
+        div.chart-title {
+            color: #FFFFFF !important;
+            font-size: 20px !important;
+            font-weight: 700 !important;
+            margin-bottom: 16px !important;
+            letter-spacing: -0.3px !important;
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #121212;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #282828;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #1DB954;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+
+load_css()
+
+# -----------------------------
+# Page-specific gradient (Dark Orange/Burnt Orange for Genres)
+# -----------------------------
+
+st.markdown("""
+<style>
+.stApp {
+    background:
+        radial-gradient(
+            circle at 50% -15%,
+            rgba(205, 118, 42, 0.38),
+            transparent 55%
+        ),
+        linear-gradient(
+            180deg,
+            #8C4F19 0%,
+            #6C3E16 18%,
+            #4E2D12 40%,
+            #2F2117 62%,
+            #1B1B1B 82%,
+            #121212 100%
+        ) !important;
+    background-attachment: fixed !important;
+}
+</style>
+""", unsafe_allow_html=True)
 
 # -----------------------------
 # Constants
@@ -66,35 +281,24 @@ def create_radar_chart(data_a, data_b, features, label_a, label_b, title):
             theta=[f.capitalize() for f in features],
             fill="toself",
             name=label_b,
-            line=dict(color="#FF6B6B"),
-            fillcolor="rgba(255, 107, 107, 0.3)"
+            line=dict(color="#43D17D"),
+            fillcolor="rgba(67, 209, 125, 0.25)"
         )
     )
     
     fig.update_layout(
         template="plotly_dark",
-        paper_bgcolor="#121212",
-        plot_bgcolor="#121212",
-        font=dict(color="white"),
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        font=dict(color="#B3B3B3", family="Inter, sans-serif", size=12),
         polar=dict(
-            radialaxis=dict(
-                visible=True,
-                range=[0, 1],
-                tickfont=dict(color="white")
-            ),
-            angularaxis=dict(
-                tickfont=dict(color="white")
-            )
+            radialaxis=dict(visible=True, range=[0, 1], tickfont=dict(color="#B3B3B3")),
+            angularaxis=dict(tickfont=dict(color="#B3B3B3"))
         ),
-        title=dict(
-            text=title,
-            font=dict(color="white")
-        ),
-        legend=dict(
-            font=dict(color="white"),
-            bgcolor="rgba(0,0,0,0.5)"
-        ),
-        height=600
+        title=dict(text=title, font=dict(color="#FFFFFF", size=16)),
+        legend=dict(font=dict(color="#B3B3B3"), bgcolor="rgba(0,0,0,0.5)"),
+        height=650,
+        margin=dict(l=10, r=10, t=40, b=10)
     )
     
     return fig
@@ -107,7 +311,10 @@ def generate_comparison_summary(entity_a, entity_b, label_a, label_b, features):
     
     # Entity A advantages
     with col_summary1:
-        st.markdown(f"**{label_a} has higher:**")
+        st.markdown(f"""
+        <div class="table-card">
+            <div style="color:#FFFFFF; font-weight:600; font-size:18px; margin-bottom:12px;">{label_a} has higher:</div>
+        """, unsafe_allow_html=True)
         advantages_a = []
         
         for feature in features:
@@ -123,10 +330,14 @@ def generate_comparison_summary(entity_a, entity_b, label_a, label_b, features):
                 st.markdown(adv)
         else:
             st.markdown("No significant advantages")
+        st.markdown('</div>', unsafe_allow_html=True)
     
     # Entity B advantages
     with col_summary2:
-        st.markdown(f"**{label_b} has higher:**")
+        st.markdown(f"""
+        <div class="table-card">
+            <div style="color:#FFFFFF; font-weight:600; font-size:18px; margin-bottom:12px;">{label_b} has higher:</div>
+        """, unsafe_allow_html=True)
         advantages_b = []
         
         for feature in features:
@@ -142,75 +353,123 @@ def generate_comparison_summary(entity_a, entity_b, label_a, label_b, features):
                 st.markdown(adv)
         else:
             st.markdown("No significant advantages")
+        st.markdown('</div>', unsafe_allow_html=True)
 
 # -----------------------------
-# Page Title
+# Hero Header
 # -----------------------------
-st.title("🎸 Genre Analytics")
 
-st.write(
-    """
-    Analyze Spotify genres using popularity and audio features. 
-    Compare genres and discover their unique musical characteristics.
-    """
-)
+st.markdown('<div class="hero-wrapper">', unsafe_allow_html=True)
 
-st.divider()
+logo_path = Path(__file__).parent.parent / "assets" / "spotify_logo.png"
+
+if logo_path.exists():
+    with open(logo_path, "rb") as img_file:
+        img_base64 = base64.b64encode(img_file.read()).decode()
+
+    st.markdown(f"""
+    <div class="hero-header">
+        <img src="data:image/png;base64,{img_base64}" class="hero-logo" alt="Spotify Logo">
+        <div>
+            <div class="hero-title">Genre Analytics</div>
+            <div class="hero-subtitle">Discover Genre Trends & Audio Characteristics</div>
+            <p style="color:#E8D5C0; font-size:15px; margin-top:12px; font-weight:500;">
+                <b>{len(genres):,}</b> Genres
+                &nbsp;&nbsp;•&nbsp;&nbsp;
+                <b>{len(songs):,}</b> Songs
+                &nbsp;&nbsp;•&nbsp;&nbsp;
+                <b>{genres['popularity'].mean():.1f}</b> Avg Popularity
+            </p>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+else:
+    st.markdown("""
+    <div class="hero-header">
+        <div style="
+            background:#1DB954;
+            width:120px;
+            height:120px;
+            border-radius:20px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:56px;
+            font-weight:900;
+            color:#000;
+            flex-shrink:0;
+        ">
+            S
+        </div>
+        <div>
+            <div class="hero-title">Genre Analytics</div>
+            <div class="hero-subtitle">Discover Genre Trends & Audio Characteristics</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+st.markdown("</div>", unsafe_allow_html=True)
+
+st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
 
 # -----------------------------
-# Step 3: Top Genre KPI
+# KPI Cards
 # -----------------------------
-top_genre = genres.sort_values(
-    "popularity",
-    ascending=False
-).iloc[0]
 
-# Display KPIs
+top_genre = genres.sort_values("popularity", ascending=False).iloc[0]
+
 col_kpi1, col_kpi2, col_kpi3, col_kpi4 = st.columns(4)
 
 with col_kpi1:
-    st.metric(
-        "🏆 Most Popular Genre",
-        top_genre["genres"],
-        f"{top_genre['popularity']:.1f} avg popularity"
-    )
+    st.markdown(f"""
+    <div class="kpi-card">
+        <div class="kpi-label">Most Popular Genre</div>
+        <div class="kpi-value">{top_genre["genres"]}</div>
+        <div class="kpi-delta">★ {top_genre["popularity"]:.1f} avg popularity</div>
+    </div>
+    """, unsafe_allow_html=True)
 
 with col_kpi2:
-    st.metric(
-        "🎼 Total Genres",
-        f"{len(genres):,}"
-    )
+    st.markdown(f"""
+    <div class="kpi-card">
+        <div class="kpi-label">Total Genres</div>
+        <div class="kpi-value">{len(genres):,}</div>
+        <div class="kpi-delta">▲ Complete catalog</div>
+    </div>
+    """, unsafe_allow_html=True)
 
 with col_kpi3:
     avg_genre_pop = genres['popularity'].mean()
-    st.metric(
-        "⭐ Avg Genre Popularity",
-        f"{avg_genre_pop:.1f}"
-    )
+    st.markdown(f"""
+    <div class="kpi-card">
+        <div class="kpi-label">Avg Genre Popularity</div>
+        <div class="kpi-value">{avg_genre_pop:.1f}</div>
+        <div class="kpi-delta">▲ Industry benchmark</div>
+    </div>
+    """, unsafe_allow_html=True)
 
 with col_kpi4:
-    # Fix: Use len(songs) instead of songs["genres"].count()
     total_songs = len(songs)
-    st.metric(
-        "📀 Total Songs",
-        f"{total_songs:,}"
-    )
+    st.markdown(f"""
+    <div class="kpi-card">
+        <div class="kpi-label">Total Songs</div>
+        <div class="kpi-value">{total_songs:,}</div>
+        <div class="kpi-delta">▲ Complete dataset</div>
+    </div>
+    """, unsafe_allow_html=True)
 
-st.divider()
+st.markdown("<div style='height:30px'></div>", unsafe_allow_html=True)
 
 # -----------------------------
-# Step 4: Top 20 Genres
+# Top 20 Genres
 # -----------------------------
-st.subheader("🏆 Top 20 Genres by Popularity")
 
-top20 = (
-    genres
-    .sort_values(
-        "popularity",
-        ascending=False
-    )
-    .head(20)
-)
+st.markdown('<div class="section-title">Top Genres</div>', unsafe_allow_html=True)
+
+st.markdown('<div class="chart-card">', unsafe_allow_html=True)
+
+top20 = genres.sort_values("popularity", ascending=False).head(20)
 
 fig_top = px.bar(
     top20,
@@ -218,8 +477,8 @@ fig_top = px.bar(
     y="genres",
     orientation="h",
     color="popularity",
-    color_continuous_scale="Viridis",
-    title="Top 20 Genres by Average Popularity",
+    color_continuous_scale=["#169C46", "#1DB954", "#1ED760"],
+    title="Top Genres by Average Popularity",
     labels={
         "popularity": "Average Popularity",
         "genres": "Genre"
@@ -228,204 +487,218 @@ fig_top = px.bar(
 
 fig_top.update_layout(
     template="plotly_dark",
-    paper_bgcolor="#121212",
-    plot_bgcolor="#121212",
-    font=dict(color="white"),
+    paper_bgcolor="rgba(0,0,0,0)",
+    plot_bgcolor="rgba(0,0,0,0)",
+    font=dict(color="#B3B3B3", family="Inter, sans-serif", size=12),
+    showlegend=False,
+    margin=dict(l=10, r=10, t=40, b=10),
     height=500,
-    xaxis=dict(range=[0, 100])
+    xaxis=dict(gridcolor="#282828", range=[0, 100], zeroline=False),
+    yaxis=dict(gridcolor="#282828", zeroline=False),
+    title_font=dict(color="#FFFFFF", size=16)
 )
 
-st.plotly_chart(
-    fig_top,
-    use_container_width=True,
-    config={"displayModeBar": False}
+fig_top.update_traces(
+    textposition='outside',
+    textfont=dict(color="#B3B3B3")
 )
 
-# Business Insight
-st.info(
-    """
-    💡 **Business Insight**: These genres consistently produce highly popular songs and may 
-    deserve greater editorial promotion and playlist placement.
-    """
-)
+st.plotly_chart(fig_top, use_container_width=True, config={"displayModeBar": False})
+st.markdown('</div>', unsafe_allow_html=True)
 
-st.divider()
+st.markdown("<div style='height:30px'></div>", unsafe_allow_html=True)
 
 # -----------------------------
-# Step 5-6: Genre Comparison
+# Genre Comparison
 # -----------------------------
-st.subheader("🎯 Compare Genres")
 
-st.write(
-    """
-    Select two genres to compare their audio features and popularity metrics.
-    """
-)
+st.markdown('<div class="section-title">Compare Genres</div>', unsafe_allow_html=True)
+
+st.markdown('<div class="chart-card">', unsafe_allow_html=True)
 
 # Get genre names for dropdown
-genre_names = sorted(
-    genres["genres"].unique()
-)
+genre_names = sorted(genres["genres"].unique())
 
 # Two columns for genre selection
 left, right = st.columns(2)
 
 with left:
     genre1 = st.selectbox(
-        "🎸 Select Genre A",
+        "Genre A",
         genre_names,
         index=0 if genre_names else 0,
-        placeholder="Type to search for a genre..."
+        placeholder="Type to search for a genre...",
+        label_visibility="collapsed"
     )
+    st.caption("Search for Genre A")
 
 with right:
     default_index = 1 if len(genre_names) > 1 else 0
     genre2 = st.selectbox(
-        "🎸 Select Genre B",
+        "Genre B",
         genre_names,
         index=default_index,
-        placeholder="Type to search for a genre..."
+        placeholder="Type to search for a genre...",
+        label_visibility="collapsed"
     )
+    st.caption("Search for Genre B")
+
+st.markdown('</div>', unsafe_allow_html=True)
+
+st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
 
 # Create comparison button
 if st.button("🔄 Compare Genres", use_container_width=True):
     if genre1 == genre2:
         st.warning("Please select two different genres for comparison.")
     else:
-        # Extract genre data
         g1 = genres[genres["genres"] == genre1].iloc[0]
         g2 = genres[genres["genres"] == genre2].iloc[0]
 
-        st.divider()
+        st.markdown("<div style='height:20px'></div>", unsafe_allow_html=True)
 
         # Compare KPIs
         col1, col2 = st.columns(2)
 
         # Genre A
         with col1:
-            st.subheader(f"🎸 {genre1}")
+            st.markdown(f"""
+            <div style="color:#FFFFFF; font-size:24px; font-weight:700; margin-bottom:16px;">🎸 {genre1}</div>
+            """, unsafe_allow_html=True)
             
-            # Create metrics in a grid
             metrics_col1, metrics_col2 = st.columns(2)
             
             with metrics_col1:
-                st.metric(
-                    "⭐ Popularity",
-                    f"{g1['popularity']:.1f}"
-                )
-                st.metric(
-                    "💃 Danceability",
-                    f"{g1['danceability']:.2f}"
-                )
-                st.metric(
-                    "⚡ Energy",
-                    f"{g1['energy']:.2f}"
-                )
+                st.markdown(f"""
+                <div class="kpi-card">
+                    <div class="kpi-label">Popularity</div>
+                    <div class="kpi-value">{g1['popularity']:.1f}</div>
+                </div>
+                """, unsafe_allow_html=True)
+                st.markdown(f"""
+                <div class="kpi-card">
+                    <div class="kpi-label">Danceability</div>
+                    <div class="kpi-value">{g1['danceability']:.2f}</div>
+                </div>
+                """, unsafe_allow_html=True)
+                st.markdown(f"""
+                <div class="kpi-card">
+                    <div class="kpi-label">Energy</div>
+                    <div class="kpi-value">{g1['energy']:.2f}</div>
+                </div>
+                """, unsafe_allow_html=True)
             
             with metrics_col2:
-                st.metric(
-                    "😊 Valence",
-                    f"{g1['valence']:.2f}"
-                )
-                st.metric(
-                    "🎸 Acousticness",
-                    f"{g1['acousticness']:.2f}"
-                )
-                st.metric(
-                    "🎤 Speechiness",
-                    f"{g1['speechiness']:.2f}"
-                )
+                st.markdown(f"""
+                <div class="kpi-card">
+                    <div class="kpi-label">Valence</div>
+                    <div class="kpi-value">{g1['valence']:.2f}</div>
+                </div>
+                """, unsafe_allow_html=True)
+                st.markdown(f"""
+                <div class="kpi-card">
+                    <div class="kpi-label">Acousticness</div>
+                    <div class="kpi-value">{g1['acousticness']:.2f}</div>
+                </div>
+                """, unsafe_allow_html=True)
+                st.markdown(f"""
+                <div class="kpi-card">
+                    <div class="kpi-label">Speechiness</div>
+                    <div class="kpi-value">{g1['speechiness']:.2f}</div>
+                </div>
+                """, unsafe_allow_html=True)
 
         # Genre B
         with col2:
-            st.subheader(f"🎸 {genre2}")
+            st.markdown(f"""
+            <div style="color:#FFFFFF; font-size:24px; font-weight:700; margin-bottom:16px;">🎸 {genre2}</div>
+            """, unsafe_allow_html=True)
             
             metrics_col3, metrics_col4 = st.columns(2)
             
             with metrics_col3:
-                st.metric(
-                    "⭐ Popularity",
-                    f"{g2['popularity']:.1f}"
-                )
-                st.metric(
-                    "💃 Danceability",
-                    f"{g2['danceability']:.2f}"
-                )
-                st.metric(
-                    "⚡ Energy",
-                    f"{g2['energy']:.2f}"
-                )
+                st.markdown(f"""
+                <div class="kpi-card">
+                    <div class="kpi-label">Popularity</div>
+                    <div class="kpi-value">{g2['popularity']:.1f}</div>
+                </div>
+                """, unsafe_allow_html=True)
+                st.markdown(f"""
+                <div class="kpi-card">
+                    <div class="kpi-label">Danceability</div>
+                    <div class="kpi-value">{g2['danceability']:.2f}</div>
+                </div>
+                """, unsafe_allow_html=True)
+                st.markdown(f"""
+                <div class="kpi-card">
+                    <div class="kpi-label">Energy</div>
+                    <div class="kpi-value">{g2['energy']:.2f}</div>
+                </div>
+                """, unsafe_allow_html=True)
             
             with metrics_col4:
-                st.metric(
-                    "😊 Valence",
-                    f"{g2['valence']:.2f}"
-                )
-                st.metric(
-                    "🎸 Acousticness",
-                    f"{g2['acousticness']:.2f}"
-                )
-                st.metric(
-                    "🎤 Speechiness",
-                    f"{g2['speechiness']:.2f}"
-                )
+                st.markdown(f"""
+                <div class="kpi-card">
+                    <div class="kpi-label">Valence</div>
+                    <div class="kpi-value">{g2['valence']:.2f}</div>
+                </div>
+                """, unsafe_allow_html=True)
+                st.markdown(f"""
+                <div class="kpi-card">
+                    <div class="kpi-label">Acousticness</div>
+                    <div class="kpi-value">{g2['acousticness']:.2f}</div>
+                </div>
+                """, unsafe_allow_html=True)
+                st.markdown(f"""
+                <div class="kpi-card">
+                    <div class="kpi-label">Speechiness</div>
+                    <div class="kpi-value">{g2['speechiness']:.2f}</div>
+                </div>
+                """, unsafe_allow_html=True)
 
-        st.divider()
+        st.markdown("<div style='height:30px'></div>", unsafe_allow_html=True)
 
-        # -----------------------------
-        # Step 6: Radar Chart
-        # -----------------------------
-        st.subheader("📊 Genre Audio Feature Comparison")
+        # Radar Chart
+        st.markdown('<div class="section-title">Audio Feature Comparison</div>', unsafe_allow_html=True)
 
-        # Create radar chart using helper function
+        st.markdown('<div class="chart-card">', unsafe_allow_html=True)
+
         fig_radar = create_radar_chart(
             g1, g2, FEATURES, 
             genre1, genre2,
             "Genre Audio Profile Comparison"
         )
 
-        st.plotly_chart(
-            fig_radar,
-            use_container_width=True,
-            config={"displayModeBar": False}
-        )
+        st.plotly_chart(fig_radar, use_container_width=True, config={"displayModeBar": False})
+        st.markdown('</div>', unsafe_allow_html=True)
 
-        # -----------------------------
+        st.markdown("<div style='height:30px'></div>", unsafe_allow_html=True)
+
         # Comparison Summary
-        # -----------------------------
-        st.divider()
-        st.subheader("📌 Comparison Summary")
+        st.markdown('<div class="section-title">Comparison Summary</div>', unsafe_allow_html=True)
 
-        # Use helper function for comparison
         generate_comparison_summary(g1, g2, genre1, genre2, FEATURES_COMPARE)
 
-        st.divider()
-        st.info(
-            f"""
-            💡 **Key Insight**: The radar chart reveals that {genre1} and {genre2} have 
-            distinct audio profiles. The overall "shape" of their features helps 
-            understand their unique sound characteristics and audience appeal.
-            """
-        )
+        st.markdown("<div style='height:20px'></div>", unsafe_allow_html=True)
 
-st.divider()
+        st.info(f"""
+        💡 **Key Insight**: The radar chart reveals that {genre1} and {genre2} have 
+        distinct audio profiles. The overall "shape" of their features helps 
+        understand their unique sound characteristics and audience appeal.
+        """)
+
+st.markdown("<div style='height:30px'></div>", unsafe_allow_html=True)
 
 # -----------------------------
-# Step 7: Heatmap
+# Heatmap
 # -----------------------------
-st.subheader("🔥 Genre Audio Feature Heatmap")
 
-st.write(
-    """
-    This heatmap shows the average audio features for each genre. 
-    Darker colors indicate higher values.
-    """
-)
+st.markdown('<div class="section-title">Genre Audio Feature Heatmap</div>', unsafe_allow_html=True)
 
-# Prepare heatmap data - using FEATURES constant
+st.markdown('<div class="chart-card">', unsafe_allow_html=True)
+
 heatmap_data = genres.set_index("genres")[FEATURES]
 
-# Limit to top 50 genres for readability
 top50_genres = (
     genres
     .sort_values("popularity", ascending=False)
@@ -439,49 +712,32 @@ fig_heatmap = px.imshow(
     heatmap_top50,
     aspect="auto",
     color_continuous_scale="Viridis",
-    title="Top 50 Genres - Audio Feature Heatmap",
-    labels=dict(
-        x="Audio Features",
-        y="Genre",
-        color="Value"
-    )
+    labels=dict(x="Audio Features", y="Genre", color="Value")
 )
 
 fig_heatmap.update_layout(
     template="plotly_dark",
-    paper_bgcolor="#121212",
-    plot_bgcolor="#121212",
-    font=dict(color="white"),
+    paper_bgcolor="rgba(0,0,0,0)",
+    plot_bgcolor="rgba(0,0,0,0)",
+    font=dict(color="#B3B3B3", family="Inter, sans-serif", size=12),
     height=600,
-    xaxis=dict(tickangle=45)
+    xaxis=dict(tickangle=45, tickfont=dict(color="#B3B3B3")),
+    yaxis=dict(tickfont=dict(color="#B3B3B3")),
+    margin=dict(l=10, r=10, t=10, b=10)
 )
 
-st.plotly_chart(
-    fig_heatmap,
-    use_container_width=True,
-    config={"displayModeBar": False}
-)
+st.plotly_chart(fig_heatmap, use_container_width=True, config={"displayModeBar": False})
+st.markdown('</div>', unsafe_allow_html=True)
 
-st.info(
-    """
-    💡 **Business Insight**: Genres with similar color patterns have similar audio characteristics. 
-    This helps identify genre clusters and potential cross-genre opportunities.
-    """
-)
-
-st.divider()
+st.markdown("<div style='height:30px'></div>", unsafe_allow_html=True)
 
 # -----------------------------
-# Step 8: Scatter Plot
+# Scatter Plot
 # -----------------------------
-st.subheader("📊 Genre Energy vs Popularity")
 
-st.write(
-    """
-    Each bubble represents a genre. Size represents danceability, 
-    and color represents valence (musical positiveness).
-    """
-)
+st.markdown('<div class="section-title">Genre Energy vs Popularity</div>', unsafe_allow_html=True)
+
+st.markdown('<div class="chart-card">', unsafe_allow_html=True)
 
 fig_scatter = px.scatter(
     genres,
@@ -491,59 +747,47 @@ fig_scatter = px.scatter(
     hover_name="genres",
     color="valence",
     color_continuous_scale="Viridis",
-    title="Genre Energy vs Popularity",
     labels={
         "energy": "Energy Score",
         "popularity": "Popularity Score",
         "danceability": "Danceability",
         "valence": "Valence"
     },
-    size_max=30,
-    height=500
+    size_max=30
 )
 
 fig_scatter.update_layout(
     template="plotly_dark",
-    paper_bgcolor="#121212",
-    plot_bgcolor="#121212",
-    font=dict(color="white"),
+    paper_bgcolor="rgba(0,0,0,0)",
+    plot_bgcolor="rgba(0,0,0,0)",
+    font=dict(color="#B3B3B3", family="Inter, sans-serif", size=12),
+    margin=dict(l=10, r=10, t=10, b=10),
+    height=500,
+    xaxis=dict(gridcolor="#282828", zeroline=False, tickfont=dict(color="#B3B3B3")),
+    yaxis=dict(gridcolor="#282828", zeroline=False, tickfont=dict(color="#B3B3B3"))
 )
 
-st.plotly_chart(
-    fig_scatter,
-    use_container_width=True,
-    config={"displayModeBar": False}
-)
+st.plotly_chart(fig_scatter, use_container_width=True, config={"displayModeBar": False})
+st.markdown('</div>', unsafe_allow_html=True)
 
-# Business Insight
-st.info(
-    """
-    💡 **Business Insight**: Highly energetic genres are not always the most popular. 
-    Genres with moderate energy but high danceability often perform better across audiences.
-    """
-)
-
-st.divider()
+st.markdown("<div style='height:30px'></div>", unsafe_allow_html=True)
 
 # -----------------------------
-# Step 9: Genre Explorer
+# Genre Explorer
 # -----------------------------
-st.subheader("🔍 Genre Explorer")
 
-st.write(
-    """
-    Search for specific genres and explore their audio features and popularity.
-    """
-)
+st.markdown('<div class="section-title">Genre Explorer</div>', unsafe_allow_html=True)
 
-# Search box
+st.markdown('<div class="chart-card">', unsafe_allow_html=True)
+
 genre_search = st.text_input(
-    "🔍 Search Genre",
+    "Search Genre",
     placeholder="Type a genre name...",
-    help="Search for genres by name (case-insensitive)"
+    help="Search for genres by name (case-insensitive)",
+    label_visibility="collapsed"
 )
+st.caption("Search by genre name")
 
-# Filter genres
 filtered_genres = genres.copy()
 
 if genre_search:
@@ -557,7 +801,6 @@ if genre_search:
     else:
         st.warning(f"No genres found matching '{genre_search}'")
 
-# Display genre data
 st.dataframe(
     filtered_genres,
     use_container_width=True,
@@ -595,59 +838,85 @@ st.dataframe(
     }
 )
 
-# Download filtered genres
-st.markdown("---")
-csv_genres = filtered_genres.to_csv(index=False).encode("utf-8")
-st.download_button(
-    "⬇ Download Genre Data (CSV)",
-    csv_genres,
-    file_name=f"genres_{len(filtered_genres)}.csv",
-    mime="text/csv",
-    use_container_width=True,
-    help="Download the current genre data as a CSV file"
-)
+st.markdown('</div>', unsafe_allow_html=True)
 
-st.divider()
+st.markdown("<div style='height:30px'></div>", unsafe_allow_html=True)
 
 # -----------------------------
-# Step 10: Business Insights
+# Export Section
 # -----------------------------
-st.subheader("📌 Key Business Insights")
+
+st.markdown('<div class="section-title">Export Genre Data</div>', unsafe_allow_html=True)
+
+st.markdown('<div class="chart-card">', unsafe_allow_html=True)
+
+col_download1, col_download2, col_download3 = st.columns([1, 2, 1])
+
+with col_download2:
+    csv_genres = filtered_genres.to_csv(index=False).encode("utf-8")
+    st.download_button(
+        "Download CSV",
+        csv_genres,
+        file_name=f"genres_{len(filtered_genres)}.csv",
+        mime="text/csv",
+        use_container_width=True,
+        help="Download the current genre data as a CSV file"
+    )
+
+st.markdown('</div>', unsafe_allow_html=True)
+
+st.markdown("<div style='height:30px'></div>", unsafe_allow_html=True)
+
+# -----------------------------
+# Business Insights
+# -----------------------------
+
+st.markdown('<div class="section-title">Key Insights</div>', unsafe_allow_html=True)
 
 col_insight1, col_insight2 = st.columns(2)
 
 with col_insight1:
     st.markdown("""
-    **🎯 Genre Performance**
-    - Some genres consistently achieve higher popularity than others
-    - The top genres show strong performance across multiple audio features
-    - Genre popularity distribution shows significant variation
-    
-    **🎵 Audio Characteristics**
-    - Danceability varies significantly across genres
-    - Highly energetic genres are not always the most popular
-    - Acousticness and instrumentalness define genre identity
-    - Speechiness is a key differentiator for certain genres
-    """)
+    <div class="table-card">
+        <div style="color:#FFFFFF; font-weight:600; font-size:18px; margin-bottom:12px;">🎯 Genre Performance</div>
+        <div style="color:#B3B3B3; font-size:14px; line-height:1.8;">
+        • Some genres consistently achieve higher popularity than others<br>
+        • The top genres show strong performance across multiple audio features<br>
+        • Genre popularity distribution shows significant variation
+        </div>
+        <div style="color:#FFFFFF; font-weight:600; font-size:18px; margin-top:16px; margin-bottom:12px;">🎵 Audio Characteristics</div>
+        <div style="color:#B3B3B3; font-size:14px; line-height:1.8;">
+        • Danceability varies significantly across genres<br>
+        • Highly energetic genres are not always the most popular<br>
+        • Acousticness and instrumentalness define genre identity<br>
+        • Speechiness is a key differentiator for certain genres
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
 with col_insight2:
     st.markdown("""
-    **💡 Strategic Recommendations**
-    - Invest marketing resources in genres with high popularity and strong engagement
-    - Cross-genre collaboration opportunities where audio profiles are complementary
-    - Playlist curation can target specific audio feature combinations
-    - Emerging genres with unique audio profiles may represent untapped markets
-    
-    **🔮 Future Applications**
-    - Heatmaps help identify genre clusters for recommendation systems
-    - Radar charts enable visual genre positioning
-    - Time-based analysis can reveal genre evolution trends
-    - Machine learning can predict genre success based on audio features
-    """)
+    <div class="table-card">
+        <div style="color:#FFFFFF; font-weight:600; font-size:18px; margin-bottom:12px;">💡 Strategic Recommendations</div>
+        <div style="color:#B3B3B3; font-size:14px; line-height:1.8;">
+        • Invest marketing resources in genres with high popularity and strong engagement<br>
+        • Cross-genre collaboration opportunities where audio profiles are complementary<br>
+        • Playlist curation can target specific audio feature combinations<br>
+        • Emerging genres with unique audio profiles may represent untapped markets
+        </div>
+        <div style="color:#FFFFFF; font-weight:600; font-size:18px; margin-top:16px; margin-bottom:12px;">🔮 Future Applications</div>
+        <div style="color:#B3B3B3; font-size:14px; line-height:1.8;">
+        • Heatmaps help identify genre clusters for recommendation systems<br>
+        • Radar charts enable visual genre positioning<br>
+        • Time-based analysis can reveal genre evolution trends<br>
+        • Machine learning can predict genre success based on audio features
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
 # -----------------------------
 # Footer
 # -----------------------------
-st.divider()
-st.caption(f"Data last updated: {pd.Timestamp.now().strftime('%Y-%m-%d %H:%M:%S')}")
-st.caption(f"Total genres in dataset: {len(genres):,} | Total songs: {len(songs):,}")
+
+st.markdown("<div style='height:30px'></div>", unsafe_allow_html=True)
+st.caption(f"Updated: {pd.Timestamp.now().strftime('%Y-%m-%d %H:%M')}  •  {len(genres):,} Genres  •  {len(songs):,} Songs")

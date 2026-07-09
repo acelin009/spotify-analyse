@@ -4,86 +4,349 @@ import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
+from pathlib import Path
+from PIL import Image
+import base64
 
 from data_loader import load_data
 
+# -----------------------------
 # Page Configuration
-st.set_page_config(
-    page_title="Artist Analytics",
-    page_icon="🎤",
-    layout="wide"
-)
+# -----------------------------
 
+# Load logo for favicon
+logo_path = Path(__file__).parent.parent / "assets" / "spotify_logo.png"
+if logo_path.exists():
+    try:
+        favicon = Image.open(logo_path)
+        st.set_page_config(
+            page_title="Artist Analytics • Spotify Music Intelligence",
+            page_icon=favicon,
+            layout="wide",
+            initial_sidebar_state="expanded"
+        )
+    except:
+        st.set_page_config(
+            page_title="Artist Analytics • Spotify Music Intelligence",
+            page_icon="🎤",
+            layout="wide",
+            initial_sidebar_state="expanded"
+        )
+else:
+    st.set_page_config(
+        page_title="Artist Analytics • Spotify Music Intelligence",
+        page_icon="🎤",
+        layout="wide",
+        initial_sidebar_state="expanded"
+    )
+
+# -----------------------------
 # Load Data
+# -----------------------------
+
 songs, artists, genres, years, songs_with_genres = load_data()
 
 # -----------------------------
-# Page Title
+# Load Custom CSS
 # -----------------------------
-st.title("🎤 Artist Analytics")
 
-st.write(
-    """
-    Analyze artist performance and compare musical characteristics. 
-    Discover insights about top artists and their audio profiles.
-    """
-)
+def load_css():
+    css_file = Path(__file__).parent.parent / "assets" / "styles.css"
+    if css_file.exists():
+        with open(css_file) as f:
+            st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+    else:
+        st.markdown("""
+        <style>
+        /* Hide Streamlit branding */
+        #MainMenu {visibility: hidden;}
+        footer {visibility: hidden;}
+        header {visibility: hidden;}
+        
+        /* Import Inter font */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        
+        /* Global styles */
+        html, body, [class*="css"] {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+        }
+        
+        /* Main container */
+        .main > div {
+            padding: 0.5rem 2rem 1rem 2rem !important;
+            max-width: 1400px !important;
+            margin: 0 auto !important;
+        }
+        
+        /* Hero Title */
+        div.hero-title {
+            font-size: 76px !important;
+            font-weight: 900 !important;
+            color: #FFFFFF !important;
+            letter-spacing: -3px !important;
+            line-height: 1 !important;
+            margin-bottom: 4px !important;
+        }
+        
+        div.hero-subtitle {
+            font-size: 22px !important;
+            color: #C4B8A8 !important;
+            font-weight: 400 !important;
+            margin-top: 4px !important;
+            letter-spacing: -0.3px !important;
+        }
+        
+        /* Section Title */
+        div.section-title {
+            font-size: 34px !important;
+            font-weight: 800 !important;
+            color: #FFFFFF !important;
+            margin-bottom: 24px !important;
+            letter-spacing: 1px !important;
+            text-transform: uppercase !important;
+        }
+        
+        /* KPI Cards - Dark sand theme */
+        div.kpi-card {
+            background: rgba(30, 27, 22, 0.92) !important;
+            border-radius: 18px !important;
+            padding: 20px 24px !important;
+            border: 1px solid rgba(255, 255, 255, 0.04) !important;
+            transition: all 0.25s ease !important;
+        }
+        
+        div.kpi-card:hover {
+            border-color: #1DB954 !important;
+            transform: translateY(-4px) !important;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5) !important;
+        }
+        
+        div.kpi-value {
+            font-size: 48px !important;
+            font-weight: 900 !important;
+            color: #FFFFFF !important;
+            margin: 8px 0 4px 0 !important;
+            letter-spacing: -2px !important;
+            line-height: 1.1 !important;
+        }
+        
+        div.kpi-label {
+            font-size: 14px !important;
+            color: #B3B3B3 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.8px !important;
+            font-weight: 600 !important;
+        }
+        
+        div.kpi-delta {
+            font-size: 0.85rem !important;
+            color: #1DB954 !important;
+            font-weight: 500 !important;
+        }
+        
+        /* Chart container - Dark sand theme */
+        div.chart-card {
+            background: rgba(30, 27, 22, 0.92) !important;
+            border-radius: 18px !important;
+            padding: 24px !important;
+            border: 1px solid rgba(255, 255, 255, 0.04) !important;
+            margin-bottom: 16px !important;
+            transition: all 0.25s ease !important;
+        }
+        
+        div.chart-card:hover {
+            border-color: rgba(255, 255, 255, 0.1) !important;
+        }
+        
+        /* Table card for insights */
+        div.table-card {
+            background: rgba(30, 27, 22, 0.92) !important;
+            border-radius: 18px !important;
+            padding: 24px !important;
+            border: 1px solid rgba(255, 255, 255, 0.04) !important;
+            margin-bottom: 16px !important;
+            transition: all 0.25s ease !important;
+            height: 100%;
+        }
+        
+        div.table-card:hover {
+            border-color: rgba(255, 255, 255, 0.1) !important;
+            transform: translateY(-2px) !important;
+        }
+        
+        div.chart-title {
+            color: #FFFFFF !important;
+            font-size: 20px !important;
+            font-weight: 700 !important;
+            margin-bottom: 16px !important;
+            letter-spacing: -0.3px !important;
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #121212;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #282828;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #1DB954;
+        }
+        </style>
+        """, unsafe_allow_html=True)
 
-st.divider()
+load_css()
 
 # -----------------------------
-# Step 3: Top Artist KPI
+# Page-specific gradient (Dark Sand for Artists)
 # -----------------------------
-top_artist = artists.sort_values(
-    "popularity",
-    ascending=False
-).iloc[0]
 
-# Display top artist KPI with styling
+st.markdown("""
+<style>
+.stApp {
+    background:
+        radial-gradient(
+            circle at 50% -10%,
+            rgba(180, 150, 110, 0.30),
+            transparent 60%
+        ),
+        linear-gradient(
+            180deg,
+            #A89070 0%,
+            #7A6B55 20%,
+            #4F4235 45%,
+            #2C251F 70%,
+            #181818 88%,
+            #121212 100%
+        ) !important;
+    background-attachment: fixed !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
+# -----------------------------
+# Hero Header
+# -----------------------------
+
+st.markdown('<div class="hero-wrapper">', unsafe_allow_html=True)
+
+logo_path = Path(__file__).parent.parent / "assets" / "spotify_logo.png"
+
+if logo_path.exists():
+    with open(logo_path, "rb") as img_file:
+        img_base64 = base64.b64encode(img_file.read()).decode()
+
+    st.markdown(f"""
+    <div class="hero-header">
+        <img src="data:image/png;base64,{img_base64}" class="hero-logo" alt="Spotify Logo">
+        <div>
+            <div class="hero-title">Artist Analytics</div>
+            <div class="hero-subtitle">Discover Artist Performance & Audio Characteristics</div>
+            <p style="color:#C4B8A8; font-size:15px; margin-top:12px; font-weight:500;">
+                <b>{len(artists):,}</b> Artists
+                &nbsp;&nbsp;•&nbsp;&nbsp;
+                <b>{len(songs):,}</b> Songs
+                &nbsp;&nbsp;•&nbsp;&nbsp;
+                <b>{artists['popularity'].mean():.1f}</b> Avg Popularity
+            </p>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+else:
+    st.markdown("""
+    <div class="hero-header">
+        <div style="
+            background:#1DB954;
+            width:120px;
+            height:120px;
+            border-radius:20px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:56px;
+            font-weight:900;
+            color:#000;
+            flex-shrink:0;
+        ">
+            S
+        </div>
+        <div>
+            <div class="hero-title">Artist Analytics</div>
+            <div class="hero-subtitle">Discover Artist Performance & Audio Characteristics</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+st.markdown("</div>", unsafe_allow_html=True)
+
+st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
+
+# -----------------------------
+# KPI Cards
+# -----------------------------
+
+top_artist = artists.sort_values("popularity", ascending=False).iloc[0]
+
 col_kpi1, col_kpi2, col_kpi3, col_kpi4 = st.columns(4)
 
 with col_kpi1:
-    st.metric(
-        "🏆 Most Popular Artist",
-        top_artist["artists"],
-        f"{top_artist['popularity']:.1f} avg popularity"
-    )
+    st.markdown(f"""
+    <div class="kpi-card">
+        <div class="kpi-label">Most Popular Artist</div>
+        <div class="kpi-value">{top_artist["artists"]}</div>
+        <div class="kpi-delta">★ {top_artist["popularity"]:.1f} avg popularity</div>
+    </div>
+    """, unsafe_allow_html=True)
 
 with col_kpi2:
-    st.metric(
-        "🎵 Total Artists",
-        f"{len(artists):,}"
-    )
+    st.markdown(f"""
+    <div class="kpi-card">
+        <div class="kpi-label">Total Artists</div>
+        <div class="kpi-value">{len(artists):,}</div>
+        <div class="kpi-delta">▲ Complete catalog</div>
+    </div>
+    """, unsafe_allow_html=True)
 
 with col_kpi3:
     avg_artist_pop = artists['popularity'].mean()
-    st.metric(
-        "⭐ Avg Artist Popularity",
-        f"{avg_artist_pop:.1f}"
-    )
+    st.markdown(f"""
+    <div class="kpi-card">
+        <div class="kpi-label">Avg Artist Popularity</div>
+        <div class="kpi-value">{avg_artist_pop:.1f}</div>
+        <div class="kpi-delta">▲ Industry benchmark</div>
+    </div>
+    """, unsafe_allow_html=True)
 
 with col_kpi4:
-    total_songs = songs['artists'].count()
-    st.metric(
-        "📀 Total Songs",
-        f"{total_songs:,}"
-    )
+    total_songs = len(songs)
+    st.markdown(f"""
+    <div class="kpi-card">
+        <div class="kpi-label">Total Songs</div>
+        <div class="kpi-value">{total_songs:,}</div>
+        <div class="kpi-delta">▲ Complete dataset</div>
+    </div>
+    """, unsafe_allow_html=True)
 
-st.divider()
+st.markdown("<div style='height:30px'></div>", unsafe_allow_html=True)
 
 # -----------------------------
-# Step 4: Top 15 Artists
+# Top 15 Artists
 # -----------------------------
-st.subheader("🏆 Top 15 Artists by Popularity")
 
-top15 = (
-    artists
-    .sort_values(
-        "popularity",
-        ascending=False
-    )
-    .head(15)
-)
+st.markdown('<div class="section-title">Top 15 Artists</div>', unsafe_allow_html=True)
+
+st.markdown('<div class="chart-card">', unsafe_allow_html=True)
+
+top15 = artists.sort_values("popularity", ascending=False).head(15)
 
 fig_top = px.bar(
     top15,
@@ -91,7 +354,7 @@ fig_top = px.bar(
     y="artists",
     orientation="h",
     color="popularity",
-    color_continuous_scale="Viridis",
+    color_continuous_scale=["#169C46", "#1DB954", "#1ED760"],
     title="Top 15 Artists by Average Popularity",
     labels={
         "popularity": "Average Popularity",
@@ -101,52 +364,62 @@ fig_top = px.bar(
 
 fig_top.update_layout(
     template="plotly_dark",
-    paper_bgcolor="#121212",
-    plot_bgcolor="#121212",
-    font=dict(color="white"),
+    paper_bgcolor="rgba(0,0,0,0)",
+    plot_bgcolor="rgba(0,0,0,0)",
+    font=dict(color="#B3B3B3", family="Inter, sans-serif", size=12),
+    showlegend=False,
+    margin=dict(l=10, r=10, t=40, b=10),
     height=500,
-    xaxis=dict(range=[0, 100])
+    xaxis=dict(gridcolor="#282828", range=[0, 100], zeroline=False),
+    yaxis=dict(gridcolor="#282828", zeroline=False),
+    title_font=dict(color="#FFFFFF", size=16)
 )
 
-st.plotly_chart(
-    fig_top,
-    use_container_width=True,
-    config={"displayModeBar": False}
+fig_top.update_traces(
+    textposition='outside',
+    textfont=dict(color="#B3B3B3")
 )
 
-st.divider()
+st.plotly_chart(fig_top, use_container_width=True, config={"displayModeBar": False})
+st.markdown('</div>', unsafe_allow_html=True)
+
+st.markdown("<div style='height:30px'></div>", unsafe_allow_html=True)
 
 # -----------------------------
-# Step 5-8: Artist Comparison with Search Boxes
+# Artist Comparison
 # -----------------------------
-st.subheader("🎯 Compare Artists")
 
-st.write(
-    """
-    Search for two artists to compare their audio features and popularity metrics.
-    """
-)
+st.markdown('<div class="section-title">Compare Artists</div>', unsafe_allow_html=True)
+
+st.markdown('<div class="chart-card">', unsafe_allow_html=True)
 
 # Two columns for artist search
 left, right = st.columns(2)
 
 with left:
     artist1_search = st.text_input(
-        "🎤 Search Artist A",
-        placeholder="Type artist name... (e.g., Taylor Swift)",
-        help="Type the name of the first artist to compare"
+        "Artist A",
+        placeholder="Search Taylor Swift...",
+        help="Type the name of the first artist to compare",
+        label_visibility="collapsed"
     )
+    st.caption("Search for Artist A")
 
 with right:
     artist2_search = st.text_input(
-        "🎤 Search Artist B",
-        placeholder="Type artist name... (e.g., Ed Sheeran)",
-        help="Type the name of the second artist to compare"
+        "Artist B",
+        placeholder="Search Ed Sheeran...",
+        help="Type the name of the second artist to compare",
+        label_visibility="collapsed"
     )
+    st.caption("Search for Artist B")
+
+st.markdown('</div>', unsafe_allow_html=True)
+
+st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
 
 # Search for artists in the dataset
 if artist1_search and artist2_search:
-    # Find matching artists
     artist_a_matches = artists[
         artists["artists"].str.contains(artist1_search, case=False, na=False)
     ]
@@ -154,209 +427,191 @@ if artist1_search and artist2_search:
         artists["artists"].str.contains(artist2_search, case=False, na=False)
     ]
     
-    # Check if artists were found
     if len(artist_a_matches) == 0:
-        st.warning(f"❌ No artist found matching '{artist1_search}'. Please try a different name.")
+        st.warning(f"No artist found matching '{artist1_search}'. Please try a different name.")
     elif len(artist_b_matches) == 0:
-        st.warning(f"❌ No artist found matching '{artist2_search}'. Please try a different name.")
+        st.warning(f"No artist found matching '{artist2_search}'. Please try a different name.")
     else:
-        # Use the first match if multiple found
         a = artist_a_matches.iloc[0]
         b = artist_b_matches.iloc[0]
         
-        # Check if same artist
         if a["artists"] == b["artists"]:
-            st.warning("⚠️ Please search for two different artists.")
+            st.warning("Please search for two different artists.")
         else:
-            # Display artist names
-            st.success(f"✅ Found: **{a['artists']}** and **{b['artists']}**")
+            st.success(f"Found: **{a['artists']}** and **{b['artists']}**")
             
-            # Show all matches if multiple found
             if len(artist_a_matches) > 1:
                 with st.expander(f"Multiple matches found for '{artist1_search}'"):
-                    st.write("Did you mean one of these?")
                     for idx, row in artist_a_matches.iterrows():
                         st.write(f"• {row['artists']} (Popularity: {row['popularity']:.1f})")
             
             if len(artist_b_matches) > 1:
                 with st.expander(f"Multiple matches found for '{artist2_search}'"):
-                    st.write("Did you mean one of these?")
                     for idx, row in artist_b_matches.iterrows():
                         st.write(f"• {row['artists']} (Popularity: {row['popularity']:.1f})")
             
-            st.divider()
+            st.markdown("<div style='height:20px'></div>", unsafe_allow_html=True)
 
-            # Step 7: Compare KPIs
+            # Compare KPIs
             col1, col2 = st.columns(2)
 
             # Artist A
             with col1:
-                st.subheader(f"🎤 {a['artists']}")
+                st.markdown(f"""
+                <div style="color:#FFFFFF; font-size:24px; font-weight:700; margin-bottom:16px;">🎤 {a['artists']}</div>
+                """, unsafe_allow_html=True)
                 
-                # Create metrics in a grid
                 metrics_col1, metrics_col2 = st.columns(2)
                 
                 with metrics_col1:
-                    st.metric(
-                        "⭐ Popularity",
-                        f"{a['popularity']:.1f}"
-                    )
-                    st.metric(
-                        "💃 Danceability",
-                        f"{a['danceability']:.2f}"
-                    )
-                    st.metric(
-                        "⚡ Energy",
-                        f"{a['energy']:.2f}"
-                    )
+                    st.markdown(f"""
+                    <div class="kpi-card">
+                        <div class="kpi-label">Popularity</div>
+                        <div class="kpi-value">{a['popularity']:.1f}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+                    st.markdown(f"""
+                    <div class="kpi-card">
+                        <div class="kpi-label">Danceability</div>
+                        <div class="kpi-value">{a['danceability']:.2f}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+                    st.markdown(f"""
+                    <div class="kpi-card">
+                        <div class="kpi-label">Energy</div>
+                        <div class="kpi-value">{a['energy']:.2f}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
                 
                 with metrics_col2:
-                    st.metric(
-                        "😊 Valence",
-                        f"{a['valence']:.2f}"
-                    )
-                    st.metric(
-                        "🎸 Acousticness",
-                        f"{a['acousticness']:.2f}"
-                    )
-                    st.metric(
-                        "🎤 Speechiness",
-                        f"{a['speechiness']:.2f}"
-                    )
+                    st.markdown(f"""
+                    <div class="kpi-card">
+                        <div class="kpi-label">Valence</div>
+                        <div class="kpi-value">{a['valence']:.2f}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+                    st.markdown(f"""
+                    <div class="kpi-card">
+                        <div class="kpi-label">Acousticness</div>
+                        <div class="kpi-value">{a['acousticness']:.2f}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+                    st.markdown(f"""
+                    <div class="kpi-card">
+                        <div class="kpi-label">Speechiness</div>
+                        <div class="kpi-value">{a['speechiness']:.2f}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
 
             # Artist B
             with col2:
-                st.subheader(f"🎤 {b['artists']}")
+                st.markdown(f"""
+                <div style="color:#FFFFFF; font-size:24px; font-weight:700; margin-bottom:16px;">🎤 {b['artists']}</div>
+                """, unsafe_allow_html=True)
                 
                 metrics_col3, metrics_col4 = st.columns(2)
                 
                 with metrics_col3:
-                    st.metric(
-                        "⭐ Popularity",
-                        f"{b['popularity']:.1f}"
-                    )
-                    st.metric(
-                        "💃 Danceability",
-                        f"{b['danceability']:.2f}"
-                    )
-                    st.metric(
-                        "⚡ Energy",
-                        f"{b['energy']:.2f}"
-                    )
+                    st.markdown(f"""
+                    <div class="kpi-card">
+                        <div class="kpi-label">Popularity</div>
+                        <div class="kpi-value">{b['popularity']:.1f}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+                    st.markdown(f"""
+                    <div class="kpi-card">
+                        <div class="kpi-label">Danceability</div>
+                        <div class="kpi-value">{b['danceability']:.2f}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+                    st.markdown(f"""
+                    <div class="kpi-card">
+                        <div class="kpi-label">Energy</div>
+                        <div class="kpi-value">{b['energy']:.2f}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
                 
                 with metrics_col4:
-                    st.metric(
-                        "😊 Valence",
-                        f"{b['valence']:.2f}"
-                    )
-                    st.metric(
-                        "🎸 Acousticness",
-                        f"{b['acousticness']:.2f}"
-                    )
-                    st.metric(
-                        "🎤 Speechiness",
-                        f"{b['speechiness']:.2f}"
-                    )
+                    st.markdown(f"""
+                    <div class="kpi-card">
+                        <div class="kpi-label">Valence</div>
+                        <div class="kpi-value">{b['valence']:.2f}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+                    st.markdown(f"""
+                    <div class="kpi-card">
+                        <div class="kpi-label">Acousticness</div>
+                        <div class="kpi-value">{b['acousticness']:.2f}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+                    st.markdown(f"""
+                    <div class="kpi-card">
+                        <div class="kpi-label">Speechiness</div>
+                        <div class="kpi-value">{b['speechiness']:.2f}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
 
-            st.divider()
+            st.markdown("<div style='height:30px'></div>", unsafe_allow_html=True)
 
-            # -----------------------------
-            # Step 8: Radar Chart
-            # -----------------------------
-            st.subheader("📊 Audio Feature Comparison")
+            # Radar Chart
+            st.markdown('<div class="section-title">Audio Feature Comparison</div>', unsafe_allow_html=True)
 
-            features = [
-                "danceability",
-                "energy",
-                "acousticness",
-                "speechiness",
-                "valence",
-                "liveness"
-            ]
+            st.markdown('<div class="chart-card">', unsafe_allow_html=True)
 
-            # Create radar chart
+            features = ["danceability", "energy", "acousticness", "speechiness", "valence", "liveness"]
+
             fig_radar = go.Figure()
 
-            # Artist A
-            fig_radar.add_trace(
-                go.Scatterpolar(
-                    r=[a[f] for f in features],
-                    theta=[f.capitalize() for f in features],
-                    fill="toself",
-                    name=a['artists'],
-                    line=dict(color="#1DB954"),
-                    fillcolor="rgba(29, 185, 84, 0.3)"
-                )
-            )
+            fig_radar.add_trace(go.Scatterpolar(
+                r=[a[f] for f in features],
+                theta=[f.capitalize() for f in features],
+                fill="toself",
+                name=a['artists'],
+                line=dict(color="#1DB954"),
+                fillcolor="rgba(29, 185, 84, 0.3)"
+            ))
 
-            # Artist B
-            fig_radar.add_trace(
-                go.Scatterpolar(
-                    r=[b[f] for f in features],
-                    theta=[f.capitalize() for f in features],
-                    fill="toself",
-                    name=b['artists'],
-                    line=dict(color="#FF6B6B"),
-                    fillcolor="rgba(255, 107, 107, 0.3)"
-                )
-            )
+            fig_radar.add_trace(go.Scatterpolar(
+                r=[b[f] for f in features],
+                theta=[f.capitalize() for f in features],
+                fill="toself",
+                name=b['artists'],
+                line=dict(color="#43D17D"),
+                fillcolor="rgba(67, 209, 125, 0.25)"
+            ))
 
             fig_radar.update_layout(
                 template="plotly_dark",
-                paper_bgcolor="#121212",
-                plot_bgcolor="#121212",
-                font=dict(color="white"),
+                paper_bgcolor="rgba(0,0,0,0)",
+                plot_bgcolor="rgba(0,0,0,0)",
+                font=dict(color="#B3B3B3", family="Inter, sans-serif", size=12),
                 polar=dict(
-                    radialaxis=dict(
-                        visible=True,
-                        range=[0, 1],
-                        tickfont=dict(color="white")
-                    ),
-                    angularaxis=dict(
-                        tickfont=dict(color="white")
-                    )
+                    radialaxis=dict(visible=True, range=[0, 1], tickfont=dict(color="#B3B3B3")),
+                    angularaxis=dict(tickfont=dict(color="#B3B3B3"))
                 ),
-                title=dict(
-                    text="Artist Audio Feature Comparison",
-                    font=dict(color="white")
-                ),
-                legend=dict(
-                    font=dict(color="white"),
-                    bgcolor="rgba(0,0,0,0.5)"
-                ),
-                height=600
+                title=dict(text="Artist Audio Feature Comparison", font=dict(color="#FFFFFF", size=16)),
+                legend=dict(font=dict(color="#B3B3B3"), bgcolor="rgba(0,0,0,0.5)"),
+                height=650,
+                margin=dict(l=10, r=10, t=40, b=10)
             )
 
-            st.plotly_chart(
-                fig_radar,
-                use_container_width=True,
-                config={"displayModeBar": False}
-            )
+            st.plotly_chart(fig_radar, use_container_width=True, config={"displayModeBar": False})
+            st.markdown('</div>', unsafe_allow_html=True)
 
-            # -----------------------------
+            st.markdown("<div style='height:30px'></div>", unsafe_allow_html=True)
+
             # Comparison Summary
-            # -----------------------------
-            st.divider()
-            st.subheader("📌 Comparison Summary")
+            st.markdown('<div class="section-title">Comparison Summary</div>', unsafe_allow_html=True)
 
-            # Auto-generate comparison insights
             col_summary1, col_summary2 = st.columns(2)
 
-            # Artist A advantages
             with col_summary1:
-                st.markdown(f"**{a['artists']} has higher:**")
+                st.markdown(f"""
+                <div class="table-card">
+                    <div style="color:#FFFFFF; font-weight:600; font-size:18px; margin-bottom:12px;">{a['artists']} has higher:</div>
+                """, unsafe_allow_html=True)
                 advantages_a = []
-                
-                # Compare all audio features
-                features_compare = [
-                    "popularity", 
-                    "danceability", 
-                    "energy", 
-                    "valence", 
-                    "acousticness",
-                    "speechiness"
-                ]
-                
+                features_compare = ["popularity", "danceability", "energy", "valence", "acousticness", "speechiness"]
                 for feature in features_compare:
                     if a[feature] > b[feature]:
                         diff = abs(a[feature] - b[feature])
@@ -364,18 +619,19 @@ if artist1_search and artist2_search:
                             advantages_a.append(f"✅ {feature.capitalize()} ({diff:.1f} higher)")
                         else:
                             advantages_a.append(f"✅ {feature.capitalize()} ({diff:.3f} higher)")
-                
                 if advantages_a:
                     for adv in advantages_a:
                         st.markdown(adv)
                 else:
                     st.markdown("No significant advantages")
+                st.markdown('</div>', unsafe_allow_html=True)
 
-            # Artist B advantages
             with col_summary2:
-                st.markdown(f"**{b['artists']} has higher:**")
+                st.markdown(f"""
+                <div class="table-card">
+                    <div style="color:#FFFFFF; font-weight:600; font-size:18px; margin-bottom:12px;">{b['artists']} has higher:</div>
+                """, unsafe_allow_html=True)
                 advantages_b = []
-                
                 for feature in features_compare:
                     if b[feature] > a[feature]:
                         diff = abs(b[feature] - a[feature])
@@ -383,107 +639,121 @@ if artist1_search and artist2_search:
                             advantages_b.append(f"✅ {feature.capitalize()} ({diff:.1f} higher)")
                         else:
                             advantages_b.append(f"✅ {feature.capitalize()} ({diff:.3f} higher)")
-                
                 if advantages_b:
                     for adv in advantages_b:
                         st.markdown(adv)
                 else:
                     st.markdown("No significant advantages")
+                st.markdown('</div>', unsafe_allow_html=True)
 
-            # Additional insight
-            st.divider()
-            st.info(
-                f"""
-                **💡 Key Insight**: The radar chart reveals that {a['artists']} and {b['artists']} have 
-                distinct musical profiles. The overall "shape" of their audio features 
-                helps understand their unique sound characteristics.
-                """
-            )
+            st.markdown("<div style='height:20px'></div>", unsafe_allow_html=True)
 
-# Show helpful message if both artists not searched
+            st.info(f"""
+            💡 **Key Insight**: The radar chart reveals that {a['artists']} and {b['artists']} have 
+            distinct musical profiles. The overall "shape" of their audio features 
+            helps understand their unique sound characteristics.
+            """)
+
 elif artist1_search and not artist2_search:
-    st.info("🔍 Please search for a second artist (Artist B) to compare.")
+    st.info("🔍 Please search for a second artist to compare.")
 elif not artist1_search and artist2_search:
-    st.info("🔍 Please search for a first artist (Artist A) to compare.")
+    st.info("🔍 Please search for a first artist to compare.")
 else:
     st.info("🔍 Enter two artist names above to compare their audio features and popularity metrics.")
 
+st.markdown("<div style='height:30px'></div>", unsafe_allow_html=True)
+
 # -----------------------------
-# Step 9: Distribution
+# Popularity Distribution
 # -----------------------------
-st.divider()
-st.subheader("📊 Artist Popularity Distribution")
+
+st.markdown('<div class="section-title">Popularity Distribution</div>', unsafe_allow_html=True)
+
+st.markdown('<div class="chart-card">', unsafe_allow_html=True)
 
 fig_dist = px.histogram(
     artists,
     x="popularity",
     nbins=20,
-    title="Artist Popularity Distribution",
     labels={"popularity": "Popularity Score", "count": "Number of Artists"},
     color_discrete_sequence=["#1DB954"]
 )
 
 fig_dist.update_layout(
     template="plotly_dark",
-    paper_bgcolor="#121212",
-    plot_bgcolor="#121212",
-    font=dict(color="white"),
+    paper_bgcolor="rgba(0,0,0,0)",
+    plot_bgcolor="rgba(0,0,0,0)",
+    font=dict(color="#B3B3B3", family="Inter, sans-serif", size=12),
+    showlegend=False,
+    margin=dict(l=10, r=10, t=10, b=10),
     height=400,
-    bargap=0.1
+    bargap=0.1,
+    xaxis=dict(gridcolor="#282828", zeroline=False),
+    yaxis=dict(gridcolor="#282828", zeroline=False)
 )
 
-# Add vertical line for mean
 fig_dist.add_vline(
     x=artists['popularity'].mean(),
     line_dash="dash",
-    line_color="red",
+    line_color="#1DB954",
     annotation_text=f"Mean: {artists['popularity'].mean():.1f}",
-    annotation_font=dict(color="white")
+    annotation_font=dict(color="#1DB954")
 )
 
-st.plotly_chart(
-    fig_dist,
-    use_container_width=True,
-    config={"displayModeBar": False}
-)
+fig_dist.update_traces(marker=dict(line=dict(width=0)))
+
+st.plotly_chart(fig_dist, use_container_width=True, config={"displayModeBar": False})
+st.markdown('</div>', unsafe_allow_html=True)
+
+st.markdown("<div style='height:30px'></div>", unsafe_allow_html=True)
 
 # -----------------------------
-# Step 10: Business Insights
+# Business Insights
 # -----------------------------
-st.divider()
-st.subheader("📌 Key Business Insights")
+
+st.markdown('<div class="section-title">Key Insights</div>', unsafe_allow_html=True)
 
 col_insight1, col_insight2 = st.columns(2)
 
 with col_insight1:
     st.markdown("""
-    **🎯 Artist Performance**
-    - Most artists have moderate popularity, with only a few reaching the highest levels
-    - The distribution shows a long tail, typical of music industry data
-    - Top artists consistently show higher engagement across multiple audio features
-    
-    **🎵 Audio Characteristics**
-    - Radar charts reveal distinct musical styles across artists
-    - High popularity does not always correspond to high energy or danceability
-    - Acousticness and speechiness vary significantly across artists
-    """)
+    <div class="table-card">
+        <div style="color:#FFFFFF; font-weight:600; font-size:18px; margin-bottom:12px;">🎯 Artist Performance</div>
+        <div style="color:#B3B3B3; font-size:14px; line-height:1.8;">
+        • Most artists have moderate popularity, with only a few reaching the highest levels<br>
+        • The distribution shows a long tail, typical of music industry data<br>
+        • Top artists consistently show higher engagement across multiple audio features
+        </div>
+        <div style="color:#FFFFFF; font-weight:600; font-size:18px; margin-top:16px; margin-bottom:12px;">🎵 Audio Characteristics</div>
+        <div style="color:#B3B3B3; font-size:14px; line-height:1.8;">
+        • Radar charts reveal distinct musical styles across artists<br>
+        • High popularity does not always correspond to high energy or danceability<br>
+        • Acousticness and speechiness vary significantly across artists
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
 with col_insight2:
     st.markdown("""
-    **💡 Strategic Recommendations**
-    - A&R teams can use audio feature profiles to identify emerging artists with desired sound characteristics
-    - Marketing can tailor campaigns based on an artist's unique audio footprint
-    - Playlist curators can identify artists that would complement specific moods or activities
-    
-    **🔮 Future Applications**
-    - Audio features can help identify unique artist profiles and support recommendation systems
-    - Similarity metrics can be developed to find artists with comparable sound signatures
-    - Trend analysis over time can reveal shifts in musical preferences
-    """)
+    <div class="table-card">
+        <div style="color:#FFFFFF; font-weight:600; font-size:18px; margin-bottom:12px;">💡 Strategic Recommendations</div>
+        <div style="color:#B3B3B3; font-size:14px; line-height:1.8;">
+        • A&R teams can use audio feature profiles to identify emerging artists<br>
+        • Marketing can tailor campaigns based on an artist's unique audio footprint<br>
+        • Playlist curators can identify artists that complement specific moods
+        </div>
+        <div style="color:#FFFFFF; font-weight:600; font-size:18px; margin-top:16px; margin-bottom:12px;">🔮 Future Applications</div>
+        <div style="color:#B3B3B3; font-size:14px; line-height:1.8;">
+        • Audio features can help identify unique artist profiles<br>
+        • Similarity metrics can find artists with comparable sound signatures<br>
+        • Trend analysis over time can reveal shifts in musical preferences
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
 # -----------------------------
 # Footer
 # -----------------------------
-st.divider()
-st.caption(f"Data last updated: {pd.Timestamp.now().strftime('%Y-%m-%d %H:%M:%S')}")
-st.caption(f"Total artists in dataset: {len(artists):,} | Total songs: {len(songs):,}")
+
+st.markdown("<div style='height:30px'></div>", unsafe_allow_html=True)
+st.caption(f"Updated: {pd.Timestamp.now().strftime('%Y-%m-%d %H:%M')}  •  {len(artists):,} Artists  •  {len(songs):,} Songs")
