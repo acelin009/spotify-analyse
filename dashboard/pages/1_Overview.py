@@ -1,5 +1,6 @@
 import streamlit as st
 from data_loader import load_data
+from components import kpi_card
 
 songs, artists, genres, years, songs_with_genres = load_data()
 
@@ -24,21 +25,31 @@ years_covered = (
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
-    st.metric("🎵 Total Songs", f"{total_songs:,}")
+    kpi_card(
+        "Songs",
+        f"{total_songs:,}",
+        "🎵"
+    )
 
 with col2:
-    st.metric("🎤 Artists", f"{total_artists:,}")
+    kpi_card(
+        "Artists",
+        f"{total_artists:,}",
+        "🎤"
+    )
 
 with col3:
-    st.metric(
-        "⭐ Average Popularity",
+    kpi_card(
+        "Avg Popularity",
         f"{average_popularity:.1f}",
+        "⭐"
     )
 
 with col4:
-    st.metric(
-        "📅 Years",
+    kpi_card(
+        "Years",
         f"{years_covered[0]} - {years_covered[1]}",
+        "📅"
     )
 
 st.divider()
