@@ -25,4 +25,3 @@ st.metric(
     label="Project Status",
     value="Dashboard Under Construction 🚀"
 )
-
