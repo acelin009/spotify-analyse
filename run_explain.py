@@ -1,3 +1,7 @@
+"""
+Runner for SHAP explainability module.
+"""
+
 import sys
 from pathlib import Path
 
@@ -6,7 +10,7 @@ src_path = Path(__file__).parent / "src"
 sys.path.insert(0, str(src_path))
 
 # Import and run
-from tune import main
+from explain import main
 
 if __name__ == "__main__":
     main()
