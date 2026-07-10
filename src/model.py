@@ -1,46 +1,99 @@
+# src/model.py
+"""
+Model loading and prediction functions.
+"""
+
 import joblib
 import pandas as pd
+import numpy as np
 from pathlib import Path
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+from src.config import MODEL_DIR, FEATURE_COLUMNS
 
-MODEL_PATH = BASE_DIR / "models" / "random_forest_model.pkl"
 
-SCALER_PATH = BASE_DIR / "models" / "scaler.pkl"
-
-model = joblib.load(MODEL_PATH)
-
-scaler = joblib.load(SCALER_PATH)
-
-FEATURE_COLUMNS = [
-    "danceability",
-    "energy",
-    "key",
-    "loudness",
-    "mode",
-    "speechiness",
-    "acousticness",
-    "instrumentalness",
-    "liveness",
-    "valence",
-    "tempo",
-    "duration_ms",
-    "explicit",
-    "year"
-]
-
-def predict_popularity(features: dict):
+def load_model(model_path=None):
     """
-    Predict Spotify song popularity.
+    Load the trained model from disk.
+    
+    Parameters
+    ----------
+    model_path : str or Path, optional
+        Path to the model file. If None, uses default path.
+    
+    Returns
+    -------
+    object
+        Loaded model
     """
+    if model_path is None:
+        model_path = MODEL_DIR / "random_forest_model.pkl"
+    
+    if not Path(model_path).exists():
+        raise FileNotFoundError(f"Model not found at {model_path}")
+    
+    model = joblib.load(model_path)
+    return model
 
-    input_df = pd.DataFrame([features])
 
-    input_df = input_df[FEATURE_COLUMNS]
+def load_scaler(scaler_path=None):
+    """
+    Load the trained scaler from disk.
+    
+    Parameters
+    ----------
+    scaler_path : str or Path, optional
+        Path to the scaler file. If None, uses default path.
+    
+    Returns
+    -------
+    object
+        Loaded scaler
+    """
+    if scaler_path is None:
+        scaler_path = MODEL_DIR / "scaler.pkl"
+    
+    if not Path(scaler_path).exists():
+        raise FileNotFoundError(f"Scaler not found at {scaler_path}")
+    
+    scaler = joblib.load(scaler_path)
+    return scaler
 
-    scaled_input = scaler.transform(input_df)
 
-    prediction = model.predict(scaled_input)
-
-    return float(prediction[0])
-
+def predict(model, features, scaler=None):
+    """
+    Make a prediction using the trained model.
+    
+    Parameters
+    ----------
+    model : object
+        Trained model
+    features : dict or pd.DataFrame
+        Input features
+    scaler : object, optional
+        Trained scaler to transform features
+    
+    Returns
+    -------
+    float
+        Predicted popularity
+    """
+    # Convert dict to DataFrame if needed
+    if isinstance(features, dict):
+        features = pd.DataFrame([features])
+    
+    # Ensure features are in the correct order
+    missing_cols = set(FEATURE_COLUMNS) - set(features.columns)
+    if missing_cols:
+        raise ValueError(f"Missing features: {missing_cols}")
+    
+    # Select and order features
+    X = features[FEATURE_COLUMNS]
+    
+    # Scale if scaler is provided
+    if scaler is not None:
+        X = scaler.transform(X)
+    
+    # Make prediction
+    prediction = model.predict(X)[0]
+    
+    return float(prediction)

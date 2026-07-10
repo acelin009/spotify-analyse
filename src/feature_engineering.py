@@ -161,10 +161,10 @@ def prepare_features(
     elif scaler_type == "minmax":
         scaler = MinMaxScaler()
     else:
-        print(f"Warning: Unknown scaler type '{scaler_type}'. Using StandardScaler.")
-        scaler = StandardScaler()
+        raise ValueError(f"Unknown scaler type: {scaler_type}. Choose from 'standard', 'robust', or 'minmax'.")
     
     # Fit scaler on training data only
+    
     X_train_scaled = scaler.fit_transform(X_train)
     X_test_scaled = scaler.transform(X_test)
     
