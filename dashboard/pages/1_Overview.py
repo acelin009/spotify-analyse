@@ -26,14 +26,14 @@ if logo_path.exists():
     except:
         st.set_page_config(
             page_title="Overview • Spotify Music Intelligence",
-            page_icon="🎵",
+            page_icon="",
             layout="wide",
             initial_sidebar_state="expanded"
         )
 else:
     st.set_page_config(
         page_title="Overview • Spotify Music Intelligence",
-        page_icon="🎵",
+        page_icon="",
         layout="wide",
         initial_sidebar_state="expanded"
     )
