@@ -8,6 +8,7 @@ import plotly.express as px
 import base64
 
 from data_loader import load_data
+from streamlit_searchbox import st_searchbox
 
 # -----------------------------
 # Page Configuration
@@ -220,6 +221,44 @@ def convert_csv(df):
     return df.to_csv(index=False).encode("utf-8")
 
 # -----------------------------
+# Search functions for autocomplete
+# -----------------------------
+
+def search_songs(searchterm: str) -> list:
+    """Search for songs by name (case-insensitive, partial match)."""
+    if not searchterm:
+        return []
+    
+    results = (
+        songs[
+            songs["name"].str.contains(searchterm, case=False, na=False)
+        ]
+        .sort_values("popularity", ascending=False)
+        ["name"]
+        .drop_duplicates()
+        .head(10)
+        .tolist()
+    )
+    return results
+
+def search_artists(searchterm: str) -> list:
+    """Search for artists by name (case-insensitive, partial match)."""
+    if not searchterm:
+        return []
+    
+    results = (
+        songs[
+            songs["artists"].str.contains(searchterm, case=False, na=False)
+        ]
+        .sort_values("popularity", ascending=False)
+        ["artists"]
+        .drop_duplicates()
+        .head(10)
+        .tolist()
+    )
+    return results
+
+# -----------------------------
 # Hero Header (same as Overview)
 # -----------------------------
 
@@ -288,31 +327,23 @@ st.markdown('<div class="chart-card">', unsafe_allow_html=True)
 # Create a copy of the original dataframe for filtering
 filtered = songs.copy()
 
-# Row 1: Song Selector and Artist Selector
+# Row 1: Song Search and Artist Search (Autocomplete)
 col1, col2 = st.columns([2, 1])
 
 with col1:
-    # Create song list with "All" option
-    song_options = [""] + sorted(songs["name"].dropna().unique().tolist())
-    
-    selected_song = st.selectbox(
-        "Song Name",
-        options=song_options,
-        index=0,
+    selected_song = st_searchbox(
+        search_songs,
         placeholder="Type to search for a song...",
+        label="Song Name",
         label_visibility="collapsed"
     )
     st.caption("Search by song name")
 
 with col2:
-    # Create artist list with "All" option
-    artist_options = [""] + sorted(songs["artists"].dropna().unique().tolist())
-    
-    selected_artist = st.selectbox(
-        "Artist Name",
-        options=artist_options,
-        index=0,
+    selected_artist = st_searchbox(
+        search_artists,
         placeholder="Type to search for an artist...",
+        label="Artist Name",
         label_visibility="collapsed"
     )
     st.caption("Search by artist name")
