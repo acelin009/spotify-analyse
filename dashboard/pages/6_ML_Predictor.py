@@ -574,7 +574,7 @@ with left:
     st.markdown('</div>', unsafe_allow_html=True)
     
     # Predict button
-    predict_button = st.button("🎯 Predict Popularity", use_container_width=True)
+    predict_button = st.button("Predict Popularity", use_container_width=True)
 
 # Right column: Prediction results
 with right:
@@ -628,7 +628,7 @@ with right:
     else:
         st.markdown("""
         <div style="text-align:center; padding:40px 0; color:#B3B3B3;">
-            <div style="font-size:48px; margin-bottom:16px;">🎯</div>
+            <div style="font-size:48px; margin-bottom:16px;"></div>
             <div style="font-size:18px; font-weight:500;">Adjust the sliders</div>
             <div style="font-size:14px;">and click 'Predict Popularity' to see the result</div>
         </div>
@@ -720,14 +720,14 @@ col_insight1, col_insight2 = st.columns(2)
 with col_insight1:
     st.markdown("""
     <div class="table-card">
-        <div style="color:#FFFFFF; font-weight:600; font-size:18px; margin-bottom:12px;">🎯 How This Tool Helps</div>
+        <div style="color:#FFFFFF; font-weight:600; font-size:18px; margin-bottom:12px;">How This Tool Helps</div>
         <div style="color:#B3B3B3; font-size:14px; line-height:1.8;">
         • <b>A&R Teams</b>: Evaluate potential hits before signing artists<br>
         • <b>Music Producers</b>: Optimize song features for better performance<br>
         • <b>Playlist Curators</b>: Identify tracks that will resonate with audiences<br>
         • <b>Marketing Teams</b>: Prioritize songs with higher predicted popularity
         </div>
-        <div style="color:#FFFFFF; font-weight:600; font-size:18px; margin-top:16px; margin-bottom:12px;">📊 Key Factors</div>
+        <div style="color:#FFFFFF; font-weight:600; font-size:18px; margin-top:16px; margin-bottom:12px;">Key Factors</div>
         <div style="color:#B3B3B3; font-size:14px; line-height:1.8;">
         • Danceability and energy are strong predictors of popularity<br>
         • Valence (positivity) can significantly impact listener engagement<br>
@@ -739,14 +739,14 @@ with col_insight1:
 with col_insight2:
     st.markdown("""
     <div class="table-card">
-        <div style="color:#FFFFFF; font-weight:600; font-size:18px; margin-bottom:12px;">💡 Recommendations by Prediction</div>
+        <div style="color:#FFFFFF; font-weight:600; font-size:18px; margin-bottom:12px;">Recommendations by Prediction</div>
         <div style="color:#B3B3B3; font-size:14px; line-height:1.8;">
         • <b>80-100</b>: Strong hit potential - major promotional investment<br>
         • <b>60-80</b>: Above average - good for playlist placement<br>
         • <b>40-60</b>: Average - consider feature adjustments<br>
         • <b>0-40</b>: Low potential - review production decisions
         </div>
-        <div style="color:#FFFFFF; font-weight:600; font-size:18px; margin-top:16px; margin-bottom:12px;">🔮 Future Enhancements</div>
+        <div style="color:#FFFFFF; font-weight:600; font-size:18px; margin-top:16px; margin-bottom:12px;">Future Enhancements</div>
         <div style="color:#B3B3B3; font-size:14px; line-height:1.8;">
         • Genre-specific models for more accurate predictions<br>
         • Time-of-release optimization recommendations<br>

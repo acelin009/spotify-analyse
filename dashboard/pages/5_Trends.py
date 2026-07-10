@@ -575,14 +575,14 @@ col_insight1, col_insight2 = st.columns(2)
 with col_insight1:
     st.markdown("""
     <div class="table-card">
-        <div style="color:#FFFFFF; font-weight:600; font-size:18px; margin-bottom:12px;">🎯 Trend Analysis</div>
+        <div style="color:#FFFFFF; font-weight:600; font-size:18px; margin-bottom:12px;">Trend Analysis</div>
         <div style="color:#B3B3B3; font-size:14px; line-height:1.8;">
         • Popularity has evolved over the years, reflecting changes in listener engagement<br>
         • Danceability trends reveal shifting preferences for rhythm and groove<br>
         • Energy levels show how musical intensity has evolved<br>
         • Tempo analysis indicates changing pace preferences
         </div>
-        <div style="color:#FFFFFF; font-weight:600; font-size:18px; margin-top:16px; margin-bottom:12px;">📊 Statistical Patterns</div>
+        <div style="color:#FFFFFF; font-weight:600; font-size:18px; margin-top:16px; margin-bottom:12px;">Statistical Patterns</div>
         <div style="color:#B3B3B3; font-size:14px; line-height:1.8;">
         • Rolling averages reveal underlying trends beyond short-term fluctuations<br>
         • Year-over-year growth identifies periods of significant change<br>
@@ -594,14 +594,14 @@ with col_insight1:
 with col_insight2:
     st.markdown("""
     <div class="table-card">
-        <div style="color:#FFFFFF; font-weight:600; font-size:18px; margin-bottom:12px;">💡 Strategic Recommendations</div>
+        <div style="color:#FFFFFF; font-weight:600; font-size:18px; margin-bottom:12px;">Strategic Recommendations</div>
         <div style="color:#B3B3B3; font-size:14px; line-height:1.8;">
         • Use trend data to predict future musical directions<br>
         • Identify which audio features are gaining or losing popularity<br>
         • Inform A&R decisions based on emerging trends<br>
         • Guide playlist curation toward trending sounds
         </div>
-        <div style="color:#FFFFFF; font-weight:600; font-size:18px; margin-top:16px; margin-bottom:12px;">🔮 Future Applications</div>
+        <div style="color:#FFFFFF; font-weight:600; font-size:18px; margin-top:16px; margin-bottom:12px;">Future Applications</div>
         <div style="color:#B3B3B3; font-size:14px; line-height:1.8;">
         • Extend analysis to specific genres or artists<br>
         • Build predictive models for trend forecasting<br>

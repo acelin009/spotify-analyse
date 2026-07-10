@@ -337,7 +337,7 @@ def load_data():
     
     # Show load time
     if st.sidebar:
-        st.sidebar.caption(f"📊 Data loaded in {get_load_time():.2f}s")
+        st.sidebar.caption(f"Data loaded in {get_load_time():.2f}s")
     
     return songs, artists, genres, years, songs_with_genres
 

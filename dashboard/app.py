@@ -49,11 +49,11 @@ try:
     
     # Check if data loaded successfully
     if songs.empty:
-        st.error("⚠️ Failed to load data. Please check your data files.")
+        st.error("Failed to load data. Please check your data files.")
         st.stop()
         
 except Exception as e:
-    st.error(f"⚠️ Error loading data: {e}")
+    st.error(f"Error loading data: {e}")
     st.stop()
 
 # -----------------------------

@@ -655,11 +655,11 @@ if artist1_search and artist2_search:
             """)
 
 elif artist1_search and not artist2_search:
-    st.info("🔍 Please search for a second artist to compare.")
+    st.info("Please search for a second artist to compare.")
 elif not artist1_search and artist2_search:
-    st.info("🔍 Please search for a first artist to compare.")
+    st.info("Please search for a first artist to compare.")
 else:
-    st.info("🔍 Enter two artist names above to compare their audio features and popularity metrics.")
+    st.info("Enter two artist names above to compare their audio features and popularity metrics.")
 
 st.markdown("<div style='height:30px'></div>", unsafe_allow_html=True)
 
@@ -718,13 +718,13 @@ col_insight1, col_insight2 = st.columns(2)
 with col_insight1:
     st.markdown("""
     <div class="table-card">
-        <div style="color:#FFFFFF; font-weight:600; font-size:18px; margin-bottom:12px;">🎯 Artist Performance</div>
+        <div style="color:#FFFFFF; font-weight:600; font-size:18px; margin-bottom:12px;">Artist Performance</div>
         <div style="color:#B3B3B3; font-size:14px; line-height:1.8;">
         • Most artists have moderate popularity, with only a few reaching the highest levels<br>
         • The distribution shows a long tail, typical of music industry data<br>
         • Top artists consistently show higher engagement across multiple audio features
         </div>
-        <div style="color:#FFFFFF; font-weight:600; font-size:18px; margin-top:16px; margin-bottom:12px;">🎵 Audio Characteristics</div>
+        <div style="color:#FFFFFF; font-weight:600; font-size:18px; margin-top:16px; margin-bottom:12px;">Audio Characteristics</div>
         <div style="color:#B3B3B3; font-size:14px; line-height:1.8;">
         • Radar charts reveal distinct musical styles across artists<br>
         • High popularity does not always correspond to high energy or danceability<br>
@@ -736,13 +736,13 @@ with col_insight1:
 with col_insight2:
     st.markdown("""
     <div class="table-card">
-        <div style="color:#FFFFFF; font-weight:600; font-size:18px; margin-bottom:12px;">💡 Strategic Recommendations</div>
+        <div style="color:#FFFFFF; font-weight:600; font-size:18px; margin-bottom:12px;">Strategic Recommendations</div>
         <div style="color:#B3B3B3; font-size:14px; line-height:1.8;">
         • A&R teams can use audio feature profiles to identify emerging artists<br>
         • Marketing can tailor campaigns based on an artist's unique audio footprint<br>
         • Playlist curators can identify artists that complement specific moods
         </div>
-        <div style="color:#FFFFFF; font-weight:600; font-size:18px; margin-top:16px; margin-bottom:12px;">🔮 Future Applications</div>
+        <div style="color:#FFFFFF; font-weight:600; font-size:18px; margin-top:16px; margin-bottom:12px;">Future Applications</div>
         <div style="color:#B3B3B3; font-size:14px; line-height:1.8;">
         • Audio features can help identify unique artist profiles<br>
         • Similarity metrics can find artists with comparable sound signatures<br>

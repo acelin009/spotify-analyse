@@ -548,7 +548,7 @@ st.markdown('</div>', unsafe_allow_html=True)
 st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
 
 # Create comparison button
-if st.button("🔄 Compare Genres", use_container_width=True):
+if st.button("Compare Genres", use_container_width=True):
     if genre1 == genre2:
         st.warning("Please select two different genres for comparison.")
     else:
@@ -563,7 +563,7 @@ if st.button("🔄 Compare Genres", use_container_width=True):
         # Genre A
         with col1:
             st.markdown(f"""
-            <div style="color:#FFFFFF; font-size:24px; font-weight:700; margin-bottom:16px;">🎸 {genre1}</div>
+            <div style="color:#FFFFFF; font-size:24px; font-weight:700; margin-bottom:16px;">{genre1}</div>
             """, unsafe_allow_html=True)
             
             metrics_col1, metrics_col2 = st.columns(2)
@@ -611,7 +611,7 @@ if st.button("🔄 Compare Genres", use_container_width=True):
         # Genre B
         with col2:
             st.markdown(f"""
-            <div style="color:#FFFFFF; font-size:24px; font-weight:700; margin-bottom:16px;">🎸 {genre2}</div>
+            <div style="color:#FFFFFF; font-size:24px; font-weight:700; margin-bottom:16px;">{genre2}</div>
             """, unsafe_allow_html=True)
             
             metrics_col3, metrics_col4 = st.columns(2)
@@ -682,7 +682,7 @@ if st.button("🔄 Compare Genres", use_container_width=True):
         st.markdown("<div style='height:20px'></div>", unsafe_allow_html=True)
 
         st.info(f"""
-        💡 **Key Insight**: The radar chart reveals that {genre1} and {genre2} have 
+        **Key Insight**: The radar chart reveals that {genre1} and {genre2} have 
         distinct audio profiles. The overall "shape" of their features helps 
         understand their unique sound characteristics and audience appeal.
         """)
@@ -878,7 +878,7 @@ col_insight1, col_insight2 = st.columns(2)
 with col_insight1:
     st.markdown("""
     <div class="table-card">
-        <div style="color:#FFFFFF; font-weight:600; font-size:18px; margin-bottom:12px;">🎯 Genre Performance</div>
+        <div style="color:#FFFFFF; font-weight:600; font-size:18px; margin-bottom:12px;">Genre Performance</div>
         <div style="color:#B3B3B3; font-size:14px; line-height:1.8;">
         • Some genres consistently achieve higher popularity than others<br>
         • The top genres show strong performance across multiple audio features<br>
@@ -897,14 +897,14 @@ with col_insight1:
 with col_insight2:
     st.markdown("""
     <div class="table-card">
-        <div style="color:#FFFFFF; font-weight:600; font-size:18px; margin-bottom:12px;">💡 Strategic Recommendations</div>
+        <div style="color:#FFFFFF; font-weight:600; font-size:18px; margin-bottom:12px;">Strategic Recommendations</div>
         <div style="color:#B3B3B3; font-size:14px; line-height:1.8;">
         • Invest marketing resources in genres with high popularity and strong engagement<br>
         • Cross-genre collaboration opportunities where audio profiles are complementary<br>
         • Playlist curation can target specific audio feature combinations<br>
         • Emerging genres with unique audio profiles may represent untapped markets
         </div>
-        <div style="color:#FFFFFF; font-weight:600; font-size:18px; margin-top:16px; margin-bottom:12px;">🔮 Future Applications</div>
+        <div style="color:#FFFFFF; font-weight:600; font-size:18px; margin-top:16px; margin-bottom:12px;">Future Applications</div>
         <div style="color:#B3B3B3; font-size:14px; line-height:1.8;">
         • Heatmaps help identify genre clusters for recommendation systems<br>
         • Radar charts enable visual genre positioning<br>
