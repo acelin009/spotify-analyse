@@ -354,7 +354,7 @@ fig_top = px.bar(
     y="artists",
     orientation="h",
     color="popularity",
-    color_continuous_scale=["#169C46", "#1DB954", "#1ED760"],
+    color_continuous_scale=["#555555", "#888888", "#BBBBBB"],
     title="Top 15 Artists by Average Popularity",
     labels={
         "popularity": "Average Popularity",
@@ -458,7 +458,7 @@ if artist1_search and artist2_search:
             # Artist A
             with col1:
                 st.markdown(f"""
-                <div style="color:#FFFFFF; font-size:24px; font-weight:700; margin-bottom:16px;">🎤 {a['artists']}</div>
+                <div style="color:#FFFFFF; font-size:24px; font-weight:700; margin-bottom:16px;">{a['artists']}</div>
                 """, unsafe_allow_html=True)
                 
                 metrics_col1, metrics_col2 = st.columns(2)
@@ -506,7 +506,7 @@ if artist1_search and artist2_search:
             # Artist B
             with col2:
                 st.markdown(f"""
-                <div style="color:#FFFFFF; font-size:24px; font-weight:700; margin-bottom:16px;">🎤 {b['artists']}</div>
+                <div style="color:#FFFFFF; font-size:24px; font-weight:700; margin-bottom:16px;">{b['artists']}</div>
                 """, unsafe_allow_html=True)
                 
                 metrics_col3, metrics_col4 = st.columns(2)
@@ -567,8 +567,8 @@ if artist1_search and artist2_search:
                 theta=[f.capitalize() for f in features],
                 fill="toself",
                 name=a['artists'],
-                line=dict(color="#1DB954"),
-                fillcolor="rgba(29, 185, 84, 0.3)"
+                line=dict(color="#888888"),
+                fillcolor="rgba(136, 136, 136, 0.25)"
             ))
 
             fig_radar.add_trace(go.Scatterpolar(
@@ -576,8 +576,8 @@ if artist1_search and artist2_search:
                 theta=[f.capitalize() for f in features],
                 fill="toself",
                 name=b['artists'],
-                line=dict(color="#43D17D"),
-                fillcolor="rgba(67, 209, 125, 0.25)"
+                line=dict(color="#BBBBBB"),
+                fillcolor="rgba(187, 187, 187, 0.2)"
             ))
 
             fig_radar.update_layout(
@@ -616,9 +616,9 @@ if artist1_search and artist2_search:
                     if a[feature] > b[feature]:
                         diff = abs(a[feature] - b[feature])
                         if feature == "popularity":
-                            advantages_a.append(f"✅ {feature.capitalize()} ({diff:.1f} higher)")
+                            advantages_a.append(f"• {feature.capitalize()} ({diff:.1f} higher)")
                         else:
-                            advantages_a.append(f"✅ {feature.capitalize()} ({diff:.3f} higher)")
+                            advantages_a.append(f"• {feature.capitalize()} ({diff:.3f} higher)")
                 if advantages_a:
                     for adv in advantages_a:
                         st.markdown(adv)
@@ -636,9 +636,9 @@ if artist1_search and artist2_search:
                     if b[feature] > a[feature]:
                         diff = abs(b[feature] - a[feature])
                         if feature == "popularity":
-                            advantages_b.append(f"✅ {feature.capitalize()} ({diff:.1f} higher)")
+                            advantages_b.append(f"• {feature.capitalize()} ({diff:.1f} higher)")
                         else:
-                            advantages_b.append(f"✅ {feature.capitalize()} ({diff:.3f} higher)")
+                            advantages_b.append(f"• {feature.capitalize()} ({diff:.3f} higher)")
                 if advantages_b:
                     for adv in advantages_b:
                         st.markdown(adv)
@@ -649,7 +649,7 @@ if artist1_search and artist2_search:
             st.markdown("<div style='height:20px'></div>", unsafe_allow_html=True)
 
             st.info(f"""
-            💡 **Key Insight**: The radar chart reveals that {a['artists']} and {b['artists']} have 
+            **Key Insight**: The radar chart reveals that {a['artists']} and {b['artists']} have 
             distinct musical profiles. The overall "shape" of their audio features 
             helps understand their unique sound characteristics.
             """)
@@ -676,7 +676,7 @@ fig_dist = px.histogram(
     x="popularity",
     nbins=20,
     labels={"popularity": "Popularity Score", "count": "Number of Artists"},
-    color_discrete_sequence=["#1DB954"]
+    color_discrete_sequence=["#888888"]
 )
 
 fig_dist.update_layout(
@@ -695,9 +695,9 @@ fig_dist.update_layout(
 fig_dist.add_vline(
     x=artists['popularity'].mean(),
     line_dash="dash",
-    line_color="#1DB954",
+    line_color="#888888",
     annotation_text=f"Mean: {artists['popularity'].mean():.1f}",
-    annotation_font=dict(color="#1DB954")
+    annotation_font=dict(color="#888888")
 )
 
 fig_dist.update_traces(marker=dict(line=dict(width=0)))
