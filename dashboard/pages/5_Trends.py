@@ -469,25 +469,26 @@ st.markdown('</div>', unsafe_allow_html=True)
 st.markdown("<div style='height:30px'></div>", unsafe_allow_html=True)
 
 # -----------------------------
-# Year-over-Year Growth
+# Year-over-Year Change (Fixed)
 # -----------------------------
 
-st.markdown('<div class="section-title">Year-over-Year Growth</div>', unsafe_allow_html=True)
+st.markdown('<div class="section-title">Year-over-Year Change</div>', unsafe_allow_html=True)
 st.markdown('<div class="chart-card">', unsafe_allow_html=True)
 
 if "popularity" in available_metrics:
-    years["pop_growth"] = years["popularity"].pct_change() * 100
+    # Use diff() instead of pct_change() to avoid misleading spikes
+    years["pop_change"] = years["popularity"].diff()
     
-    fig_growth = px.bar(
+    fig_change = px.bar(
         years,
         x="year",
-        y="pop_growth",
-        labels={"year": "Year", "pop_growth": "Growth Rate (%)"},
-        color="pop_growth",
+        y="pop_change",
+        labels={"year": "Year", "pop_change": "Change in Popularity"},
+        color="pop_change",
         color_continuous_scale=["#9b1d4d", "#d64d7b", "#ffffff", "#53d769", "#1DB954"]
     )
     
-    fig_growth.update_layout(
+    fig_change.update_layout(
         template="plotly_dark",
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
@@ -499,9 +500,9 @@ if "popularity" in available_metrics:
         yaxis=dict(gridcolor="#282828", zeroline=False, tickfont=dict(color="#B3B3B3"))
     )
     
-    fig_growth.add_hline(y=0, line_dash="dash", line_color="#F8C7D8", opacity=0.5)
+    fig_change.add_hline(y=0, line_dash="dash", line_color="#F8C7D8", opacity=0.5)
     
-    st.plotly_chart(fig_growth, use_container_width=True, config={"displayModeBar": False})
+    st.plotly_chart(fig_change, use_container_width=True, config={"displayModeBar": False})
 
 st.markdown('</div>', unsafe_allow_html=True)
 
@@ -519,7 +520,14 @@ if len(available_metrics) >= 2:
     n_cols = 2 if n_metrics > 2 else n_metrics
     n_rows = (n_metrics + 1) // 2
     
-    fig_combined = make_subplots(rows=n_rows, cols=n_cols, subplot_titles=[METRIC_LABELS.get(m, m.capitalize()) for m in available_metrics])
+    # Create subplots with proper spacing
+    fig_combined = make_subplots(
+        rows=n_rows,
+        cols=n_cols,
+        subplot_titles=[METRIC_LABELS.get(m, m.capitalize()) for m in available_metrics],
+        vertical_spacing=0.15,
+        horizontal_spacing=0.08
+    )
     
     colors = ["#1DB954", "#F8C7D8", "#4ECDC4", "#FFE66D"]
     
@@ -540,22 +548,53 @@ if len(available_metrics) >= 2:
             col=col
         )
     
+    # Update layout with more top margin for subplot titles
     fig_combined.update_layout(
         template="plotly_dark",
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(color="#B3B3B3", family="Inter, sans-serif", size=12),
-        height=500,
+        font=dict(
+            color="#B3B3B3",
+            family="Inter, sans-serif",
+            size=12
+        ),
+        height=620,
         showlegend=False,
         hovermode="x unified",
-        margin=dict(l=10, r=10, t=10, b=10)
+        margin=dict(
+            l=20,
+            r=20,
+            t=80,
+            b=20
+        )
     )
+    
+    # Update subplot titles with better styling
+    for annotation in fig_combined["layout"]["annotations"]:
+        annotation["font"] = dict(
+            size=18,
+            color="#FFFFFF",
+            family="Inter"
+        )
+        annotation["y"] += 0.02
     
     # Update axes for each subplot
     for row in range(1, n_rows + 1):
         for col in range(1, n_cols + 1):
-            fig_combined.update_xaxes(gridcolor="#282828", zeroline=False, tickfont=dict(color="#B3B3B3"), row=row, col=col)
-            fig_combined.update_yaxes(gridcolor="#282828", zeroline=False, tickfont=dict(color="#B3B3B3"), row=row, col=col)
+            fig_combined.update_xaxes(
+                gridcolor="#282828",
+                zeroline=False,
+                tickfont=dict(color="#B3B3B3"),
+                row=row,
+                col=col
+            )
+            fig_combined.update_yaxes(
+                gridcolor="#282828",
+                zeroline=False,
+                tickfont=dict(color="#B3B3B3"),
+                row=row,
+                col=col
+            )
     
     st.plotly_chart(fig_combined, use_container_width=True, config={"displayModeBar": False})
 
@@ -584,7 +623,7 @@ with col_insight1:
         <div style="color:#FFFFFF; font-weight:600; font-size:18px; margin-top:16px; margin-bottom:12px;">Statistical Patterns</div>
         <div style="color:#B3B3B3; font-size:14px; line-height:1.8;">
         • Rolling averages reveal underlying trends beyond short-term fluctuations<br>
-        • Year-over-year growth identifies periods of significant change<br>
+        • Year-over-year change identifies periods of significant change<br>
         • Combined trends show the relationship between different musical attributes
         </div>
     </div>
