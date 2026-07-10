@@ -25,7 +25,6 @@ desktop.ini
 
 # Project specific - LARGE FILES
 models/
-*.pkl
 *.joblib
 *.h5
 *.pt
