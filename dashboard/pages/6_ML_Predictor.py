@@ -247,46 +247,21 @@ def load_model_and_scaler():
     """Load the trained Random Forest model and scaler from disk."""
     base_dir = Path(__file__).resolve().parent.parent.parent
     
-    # Use the full model (75 MB) - you decided to deploy this one
     model_path = base_dir / "models" / "random_forest_model.pkl"
     scaler_path = base_dir / "models" / "scaler.pkl"
     
-    # DEBUG: Show what's in the project root
-    st.write("### Debug: Files in project root")
-    st.write(f"Base directory: {base_dir}")
-    
-    # List all items in the project root
-    items = sorted([item.name for item in base_dir.iterdir()])
-    st.write(f"Items in project root: {items}")
-    
-    # Check if models folder exists
-    models_dir = base_dir / "models"
-    st.write(f"Models directory exists: {models_dir.exists()}")
-    
-    if models_dir.exists():
-        model_files = sorted([f.name for f in models_dir.iterdir()])
-        st.write(f"Files in models folder: {model_files}")
-    
-    st.write("---")
-    st.write(f"Model path: {model_path}")
-    st.write(f"Model exists: {model_path.exists()}")
-    st.write(f"Scaler path: {scaler_path}")
-    st.write(f"Scaler exists: {scaler_path.exists()}")
-    
     if not model_path.exists():
-        st.error(f"Model not found at {model_path}")
-        st.info("Make sure the models folder is committed to GitHub and pushed.")
+        st.error(f"Model not found at {model_path}. Please train the model first.")
         return None, None
     
     if not scaler_path.exists():
-        st.error(f"Scaler not found at {scaler_path}")
+        st.error(f"Scaler not found at {scaler_path}. Please train the model first.")
         return None, None
     
     try:
         with st.spinner("Loading model and scaler..."):
             model = joblib.load(model_path)
             scaler = joblib.load(scaler_path)
-        st.success("Model and scaler loaded successfully!")
         return model, scaler
     except Exception as e:
         st.error(f"Error loading model or scaler: {str(e)}")
