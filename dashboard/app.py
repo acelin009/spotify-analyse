@@ -41,10 +41,20 @@ else:
     )
 
 # -----------------------------
-# Load Data
+# Load Data with Error Handling
 # -----------------------------
 
-songs, artists, genres, years, songs_with_genres = load_data()
+try:
+    songs, artists, genres, years, songs_with_genres = load_data()
+    
+    # Check if data loaded successfully
+    if songs.empty:
+        st.error("⚠️ Failed to load data. Please check your data files.")
+        st.stop()
+        
+except Exception as e:
+    st.error(f"⚠️ Error loading data: {e}")
+    st.stop()
 
 # -----------------------------
 # Load Custom CSS
