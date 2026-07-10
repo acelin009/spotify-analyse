@@ -245,7 +245,10 @@ st.markdown("""
 @st.cache_resource
 def load_model_and_scaler():
     """Load the trained Random Forest model and scaler from disk."""
-    base_dir = Path(__file__).parent.parent
+    # The models folder is at the project root, not inside dashboard
+    # Path(__file__).parent.parent goes from pages/ to dashboard/
+    # So we need to go up one more level to reach the project root
+    base_dir = Path(__file__).parent.parent.parent
     
     model_path = base_dir / "models" / "random_forest_model.pkl"
     scaler_path = base_dir / "models" / "scaler.pkl"
