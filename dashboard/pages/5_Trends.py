@@ -29,14 +29,14 @@ if logo_path.exists():
     except:
         st.set_page_config(
             page_title="Trends Analytics • Spotify Music Intelligence",
-            page_icon="📈",
+            page_icon="",
             layout="wide",
             initial_sidebar_state="expanded"
         )
 else:
     st.set_page_config(
         page_title="Trends Analytics • Spotify Music Intelligence",
-        page_icon="📈",
+        page_icon="",
         layout="wide",
         initial_sidebar_state="expanded"
     )
@@ -99,12 +99,11 @@ def load_css():
         
         /* Section Title */
         div.section-title {
-            font-size: 34px !important;
-            font-weight: 800 !important;
+            font-size: 28px !important;
+            font-weight: 700 !important;
             color: #FFFFFF !important;
-            margin-bottom: 24px !important;
-            letter-spacing: 1px !important;
-            text-transform: uppercase !important;
+            margin-bottom: 16px !important;
+            letter-spacing: 0.5px !important;
         }
         
         /* KPI Cards - Dark for pink theme */
@@ -368,7 +367,7 @@ st.markdown("<div style='height:30px'></div>", unsafe_allow_html=True)
 # Individual Trend Charts
 # -----------------------------
 for metric in available_metrics:
-    st.markdown(f'<div class="section-title">{METRIC_LABELS.get(metric, metric.capitalize())} Trends</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="section-title">{METRIC_LABELS.get(metric, metric.capitalize())}</div>', unsafe_allow_html=True)
     st.markdown('<div class="chart-card">', unsafe_allow_html=True)
     
     fig = px.line(
