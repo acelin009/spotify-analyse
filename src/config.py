@@ -1,9 +1,3 @@
-"""
-Configuration module for the Spotify Analysis project.
-
-Centralizes all paths, settings, and parameters used across the project.
-"""
-
 from pathlib import Path
 
 # ==========================
@@ -36,8 +30,7 @@ for directory in [DATA_DIR, RAW_DATA_DIR, PROCESSED_DATA_DIR,
 # ==========================
 
 # Raw data file names
-RAW_DATA_FILE = "spotify_tracks.csv"
-PROCESSED_DATA_FILE = "processed_spotify_data.csv"
+RAW_DATA_FILE = "data.csv"
 
 # ==========================
 # Machine Learning Settings
@@ -50,10 +43,11 @@ RANDOM_STATE = 42
 
 # Model hyperparameters (for Random Forest)
 RF_MODEL_PARAMS = {
-    "n_estimators": 100,
-    "max_depth": 15,
-    "min_samples_split": 5,
-    "min_samples_leaf": 2,
+    "n_estimators": 300,  # From tuning results
+    "max_depth": 20,      # From tuning results
+    "min_samples_split": 2,
+    "min_samples_leaf": 1,
+    "max_features": "sqrt",
     "random_state": RANDOM_STATE,
     "n_jobs": -1,
 }

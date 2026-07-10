@@ -1,0 +1,60 @@
+{
+    "model_name": "random_forest",
+    "model_type": "RandomForestRegressor",
+    "timestamp": "2026-07-10T12:36:49.567317",
+    "random_state": 42,
+    "target_column": "popularity",
+    "parameters": {
+        "bootstrap": true,
+        "ccp_alpha": 0.0,
+        "criterion": "squared_error",
+        "max_depth": 15,
+        "max_features": 1.0,
+        "max_leaf_nodes": null,
+        "max_samples": null,
+        "min_impurity_decrease": 0.0,
+        "min_samples_leaf": 2,
+        "min_samples_split": 5,
+        "min_weight_fraction_leaf": 0.0,
+        "monotonic_cst": null,
+        "n_estimators": 100,
+        "n_jobs": -1,
+        "oob_score": false,
+        "random_state": 42,
+        "verbose": 0,
+        "warm_start": false
+    },
+    "feature_names": [
+        "danceability",
+        "energy",
+        "key",
+        "loudness",
+        "mode",
+        "speechiness",
+        "acousticness",
+        "instrumentalness",
+        "liveness",
+        "valence",
+        "tempo",
+        "duration_ms",
+        "explicit",
+        "year"
+    ],
+    "n_features": 14,
+    "metrics": {
+        "train_MAE": 5.499370926417035,
+        "train_MSE": 60.15063954071977,
+        "train_RMSE": 7.7556843373566835,
+        "train_R2": 0.8735981508912161,
+        "train_MAPE": 27.28876152083133,
+        "test_MAE": 6.6364562578926005,
+        "test_MSE": 89.40851333517854,
+        "test_RMSE": 9.455607507462359,
+        "test_R2": 0.8131550952321942,
+        "test_MAPE": 34.284868288972326
+    },
+    "additional_info": {
+        "training_time": 7.010196924209595,
+        "test_size": 0.2
+    }
+}

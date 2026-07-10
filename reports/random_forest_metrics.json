@@ -1,13 +1,19 @@
 {
     "model_name": "random_forest",
-    "timestamp": "2026-07-10T12:32:15.741752",
+    "timestamp": "2026-07-10T12:36:47.831004",
     "metrics": {
-        "MAE": 6.6364562578926005,
-        "MSE": 89.40851333517854,
-        "RMSE": 9.455607507462359,
-        "R2": 0.8131550952321942,
-        "MAPE": 34.284868288972326
+        "train_MAE": 5.499370926417035,
+        "train_MSE": 60.15063954071977,
+        "train_RMSE": 7.7556843373566835,
+        "train_R2": 0.8735981508912161,
+        "train_MAPE": 27.28876152083133,
+        "test_MAE": 6.6364562578926005,
+        "test_MSE": 89.40851333517854,
+        "test_RMSE": 9.455607507462359,
+        "test_R2": 0.8131550952321942,
+        "test_MAPE": 34.284868288972326
     },
     "dataset": "Spotify Tracks",
-    "target_column": "popularity"
+    "target_column": "popularity",
+    "random_state": 42
 }
