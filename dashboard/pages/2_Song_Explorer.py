@@ -219,6 +219,18 @@ def convert_csv(df):
     """Convert dataframe to CSV with caching."""
     return df.to_csv(index=False).encode("utf-8")
 
+@st.cache_data
+def get_song_list():
+    """Get sorted list of unique song names with 'All' option."""
+    song_list = sorted(songs["name"].dropna().unique())
+    return [""] + song_list
+
+@st.cache_data
+def get_artist_list():
+    """Get sorted list of unique artist names with 'All' option."""
+    artist_list = sorted(songs["artists"].dropna().unique())
+    return [""] + artist_list
+
 # -----------------------------
 # Hero Header (same as Overview)
 # -----------------------------
@@ -288,23 +300,31 @@ st.markdown('<div class="chart-card">', unsafe_allow_html=True)
 # Create a copy of the original dataframe for filtering
 filtered = songs.copy()
 
-# Row 1: Search and Artist Filter
+# Row 1: Song Selector and Artist Selector
 col1, col2 = st.columns([2, 1])
 
 with col1:
-    search = st.text_input(
+    # Get song list with caching for performance
+    song_list = get_song_list()
+    
+    selected_song = st.selectbox(
         "Song Name",
-        placeholder="Type a song name...",
-        help="Search for songs by name (case-insensitive)",
+        options=song_list,
+        index=0,
+        placeholder="Type to search for a song...",
         label_visibility="collapsed"
     )
     st.caption("Search by song name")
 
 with col2:
-    artist_search = st.text_input(
-        "Artist",
-        placeholder="Type an artist name...",
-        help="Search for artists (case-insensitive, partial matches supported)",
+    # Get artist list with caching for performance
+    artist_list = get_artist_list()
+    
+    selected_artist = st.selectbox(
+        "Artist Name",
+        options=artist_list,
+        index=0,
+        placeholder="Type to search for an artist...",
         label_visibility="collapsed"
     )
     st.caption("Search by artist name")
@@ -351,19 +371,13 @@ st.markdown("<div style='height: 32px;'></div>", unsafe_allow_html=True)
 # Apply all filters
 # -----------------------------
 
-# 1. Search filter
-if search:
-    filtered = filtered[
-        filtered["name"]
-        .str.contains(search, case=False, na=False)
-    ]
+# 1. Song filter - exact match if selected
+if selected_song:
+    filtered = filtered[filtered["name"] == selected_song]
 
-# 2. Artist filter - using text search
-if artist_search:
-    filtered = filtered[
-        filtered["artists"]
-        .str.contains(artist_search, case=False, na=False)
-    ]
+# 2. Artist filter - exact match if selected
+if selected_artist:
+    filtered = filtered[filtered["artists"] == selected_artist]
 
 # 3. Year range filter
 filtered = filtered[
@@ -602,8 +616,8 @@ st.markdown("<div style='height: 32px;'></div>", unsafe_allow_html=True)
 
 with st.expander("Active Filters"):
     st.markdown(f"""
-    - **Song Search:** {search if search else 'None'}
-    - **Artist Search:** {artist_search if artist_search else 'None'}
+    - **Song:** {selected_song if selected_song else 'All'}
+    - **Artist:** {selected_artist if selected_artist else 'All'}
     - **Year Range:** {year_range[0]} - {year_range[1]}
     - **Popularity Range:** {popularity[0]} - {popularity[1]}
     - **Explicit Content:** {explicit}

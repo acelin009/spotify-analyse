@@ -884,7 +884,7 @@ with col_insight1:
         • The top genres show strong performance across multiple audio features<br>
         • Genre popularity distribution shows significant variation
         </div>
-        <div style="color:#FFFFFF; font-weight:600; font-size:18px; margin-top:16px; margin-bottom:12px;">🎵 Audio Characteristics</div>
+        <div style="color:#FFFFFF; font-weight:600; font-size:18px; margin-top:16px; margin-bottom:12px;">Audio Characteristics</div>
         <div style="color:#B3B3B3; font-size:14px; line-height:1.8;">
         • Danceability varies significantly across genres<br>
         • Highly energetic genres are not always the most popular<br>
