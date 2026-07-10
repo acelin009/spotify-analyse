@@ -7,6 +7,7 @@ import numpy as np
 from pathlib import Path
 from PIL import Image
 import base64
+import joblib
 
 from data_loader import load_data
 
@@ -28,14 +29,14 @@ if logo_path.exists():
     except:
         st.set_page_config(
             page_title="ML Predictor • Spotify Music Intelligence",
-            page_icon="🤖",
+            page_icon="",
             layout="wide",
             initial_sidebar_state="expanded"
         )
 else:
     st.set_page_config(
         page_title="ML Predictor • Spotify Music Intelligence",
-        page_icon="🤖",
+        page_icon="",
         layout="wide",
         initial_sidebar_state="expanded"
     )
@@ -238,38 +239,35 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # -----------------------------
-# Temporary Model Function
+# Load Model and Scaler
 # -----------------------------
-def predict_popularity(features):
-    """
-    Temporary placeholder for popularity prediction.
-    Replace with actual model once trained.
-    """
-    weights = {
-        "danceability": 0.20,
-        "energy": 0.15,
-        "loudness": 0.10,
-        "valence": 0.15,
-        "tempo": 0.05,
-        "acousticness": -0.10,
-        "instrumentalness": -0.05,
-        "speechiness": 0.05,
-        "liveness": 0.05,
-        "duration_ms": 0.05,
-        "explicit": 0.10
-    }
+
+@st.cache_resource
+def load_model_and_scaler():
+    """Load the trained Random Forest model and scaler from disk."""
+    base_dir = Path(__file__).parent.parent
     
-    normalized_features = features.copy()
-    normalized_features["loudness"] = (features["loudness"] + 60) / 60
-    normalized_features["duration_ms"] = features["duration_ms"] / 600000
+    model_path = base_dir / "models" / "random_forest_model.pkl"
+    scaler_path = base_dir / "models" / "scaler.pkl"
     
-    score = 50
-    for feature, weight in weights.items():
-        if feature in normalized_features:
-            score += normalized_features[feature] * weight * 50
+    if not model_path.exists():
+        st.error(f"Model not found at {model_path}. Please train the model first.")
+        return None, None
     
-    score += np.random.normal(0, 3)
-    return max(0, min(100, score))
+    if not scaler_path.exists():
+        st.error(f"Scaler not found at {scaler_path}. Please train the model first.")
+        return None, None
+    
+    try:
+        model = joblib.load(model_path)
+        scaler = joblib.load(scaler_path)
+        return model, scaler
+    except Exception as e:
+        st.error(f"Error loading model or scaler: {str(e)}")
+        return None, None
+
+# Load the model and scaler
+model, scaler = load_model_and_scaler()
 
 # -----------------------------
 # Helper Functions
@@ -322,7 +320,7 @@ def get_prediction_label(prediction):
     if prediction >= 80:
         return "Potential Hit", "success"
     elif prediction >= 60:
-        return "🎵 Above Average", "info"
+        return "Above Average", "info"
     elif prediction >= 40:
         return "Average Potential", "warning"
     else:
@@ -349,8 +347,29 @@ def load_example_song(song_name):
         "valence": song["valence"],
         "tempo": song["tempo"],
         "duration_ms": song["duration_ms"],
-        "explicit": 1 if song["explicit"] else 0
+        "explicit": 1 if song["explicit"] else 0,
+        "key": song.get("key", 0),
+        "mode": song.get("mode", 0),
+        "year": song.get("year", 2020)
     }
+
+# Feature order expected by the model
+FEATURE_NAMES = [
+    "danceability",
+    "energy",
+    "key",
+    "loudness",
+    "mode",
+    "speechiness",
+    "acousticness",
+    "instrumentalness",
+    "liveness",
+    "valence",
+    "tempo",
+    "duration_ms",
+    "explicit",
+    "year"
+]
 
 # -----------------------------
 # Hero Header
@@ -371,11 +390,11 @@ if logo_path.exists():
             <div class="hero-title">ML Popularity Predictor</div>
             <div class="hero-subtitle">Predict Song Success Using Audio Features</div>
             <p style="color:#D8C8E8; font-size:15px; margin-top:12px; font-weight:500;">
-                <b>11</b> Audio Features
+                <b>14</b> Audio Features
                 &nbsp;&nbsp;•&nbsp;&nbsp;
-                <b>AI</b> Prediction
+                <b>Random Forest</b> Model
                 &nbsp;&nbsp;•&nbsp;&nbsp;
-                <b>{len(songs):,}</b> Songs
+                <b>{len(songs):,}</b> Songs Trained
             </p>
         </div>
     </div>
@@ -409,6 +428,10 @@ else:
 st.markdown("</div>", unsafe_allow_html=True)
 
 st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
+
+# Check if model is loaded
+if model is None or scaler is None:
+    st.stop()
 
 # -----------------------------
 # Example Song Selector
@@ -447,7 +470,9 @@ if "slider_values" not in st.session_state:
     st.session_state.slider_values = {
         "danceability": 0.50,
         "energy": 0.50,
+        "key": 0,
         "loudness": -10.0,
+        "mode": 0,
         "speechiness": 0.05,
         "acousticness": 0.50,
         "instrumentalness": 0.0,
@@ -455,7 +480,8 @@ if "slider_values" not in st.session_state:
         "valence": 0.50,
         "tempo": 120.0,
         "duration_ms": 200000,
-        "explicit": 0
+        "explicit": 0,
+        "year": 2020
     }
 
 # Load example song if selected
@@ -472,104 +498,157 @@ if selected_example != "Custom Input":
 with left:
     st.markdown('<div class="chart-card">', unsafe_allow_html=True)
     
-    danceability = st.slider(
-        "Danceability",
-        0.0, 1.0,
-        st.session_state.slider_values["danceability"],
-        0.01,
-        help="How suitable a track is for dancing (0-1)"
-    )
-    st.session_state.slider_values["danceability"] = danceability
+    # Row 1: Danceability and Energy
+    col_feat1, col_feat2 = st.columns(2)
+    with col_feat1:
+        danceability = st.slider(
+            "Danceability",
+            0.0, 1.0,
+            st.session_state.slider_values["danceability"],
+            0.01,
+            help="How suitable a track is for dancing (0-1)"
+        )
+        st.session_state.slider_values["danceability"] = danceability
     
-    energy = st.slider(
-        "Energy",
-        0.0, 1.0,
-        st.session_state.slider_values["energy"],
-        0.01,
-        help="Perceptual measure of intensity and activity (0-1)"
-    )
-    st.session_state.slider_values["energy"] = energy
+    with col_feat2:
+        energy = st.slider(
+            "Energy",
+            0.0, 1.0,
+            st.session_state.slider_values["energy"],
+            0.01,
+            help="Perceptual measure of intensity and activity (0-1)"
+        )
+        st.session_state.slider_values["energy"] = energy
     
-    loudness = st.slider(
-        "Loudness",
-        -60.0, 0.0,
-        st.session_state.slider_values["loudness"],
-        0.1,
-        help="Overall loudness in decibels (dB)"
-    )
-    st.session_state.slider_values["loudness"] = loudness
+    # Row 2: Key and Mode
+    col_feat3, col_feat4 = st.columns(2)
+    with col_feat3:
+        key = st.selectbox(
+            "Key",
+            options=list(range(12)),
+            index=st.session_state.slider_values["key"],
+            format_func=lambda x: ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"][x],
+            help="Musical key of the track (0-11)"
+        )
+        st.session_state.slider_values["key"] = key
     
-    speechiness = st.slider(
-        "Speechiness",
-        0.0, 1.0,
-        st.session_state.slider_values["speechiness"],
-        0.01,
-        help="Presence of spoken words in the track (0-1)"
-    )
-    st.session_state.slider_values["speechiness"] = speechiness
+    with col_feat4:
+        mode = st.selectbox(
+            "Mode",
+            options=[0, 1],
+            index=st.session_state.slider_values["mode"],
+            format_func=lambda x: "Minor" if x == 0 else "Major",
+            help="Musical mode (0=Minor, 1=Major)"
+        )
+        st.session_state.slider_values["mode"] = mode
     
-    acousticness = st.slider(
-        "Acousticness",
-        0.0, 1.0,
-        st.session_state.slider_values["acousticness"],
-        0.01,
-        help="Confidence measure of whether the track is acoustic (0-1)"
-    )
-    st.session_state.slider_values["acousticness"] = acousticness
+    # Row 3: Loudness and Year
+    col_feat5, col_feat6 = st.columns(2)
+    with col_feat5:
+        loudness = st.slider(
+            "Loudness",
+            -60.0, 0.0,
+            st.session_state.slider_values["loudness"],
+            0.1,
+            help="Overall loudness in decibels (dB)"
+        )
+        st.session_state.slider_values["loudness"] = loudness
     
-    instrumentalness = st.slider(
-        "Instrumentalness",
-        0.0, 1.0,
-        st.session_state.slider_values["instrumentalness"],
-        0.01,
-        help="Predicts whether a track contains no vocals (0-1)"
-    )
-    st.session_state.slider_values["instrumentalness"] = instrumentalness
+    with col_feat6:
+        year = st.slider(
+            "Release Year",
+            1950, 2025,
+            int(st.session_state.slider_values["year"]),
+            1,
+            help="Year the song was released"
+        )
+        st.session_state.slider_values["year"] = year
     
-    liveness = st.slider(
-        "Liveness",
-        0.0, 1.0,
-        st.session_state.slider_values["liveness"],
-        0.01,
-        help="Detects the presence of an audience in the recording (0-1)"
-    )
-    st.session_state.slider_values["liveness"] = liveness
+    # Row 4: Speechiness, Acousticness, Instrumentalness
+    col_feat7, col_feat8, col_feat9 = st.columns(3)
+    with col_feat7:
+        speechiness = st.slider(
+            "Speechiness",
+            0.0, 1.0,
+            st.session_state.slider_values["speechiness"],
+            0.01,
+            help="Presence of spoken words (0-1)"
+        )
+        st.session_state.slider_values["speechiness"] = speechiness
     
-    valence = st.slider(
-        "Valence",
-        0.0, 1.0,
-        st.session_state.slider_values["valence"],
-        0.01,
-        help="Musical positiveness conveyed by a track (0-1)"
-    )
-    st.session_state.slider_values["valence"] = valence
+    with col_feat8:
+        acousticness = st.slider(
+            "Acousticness",
+            0.0, 1.0,
+            st.session_state.slider_values["acousticness"],
+            0.01,
+            help="Confidence measure of acoustic track (0-1)"
+        )
+        st.session_state.slider_values["acousticness"] = acousticness
     
-    tempo = st.slider(
-        "Tempo (BPM)",
-        0.0, 250.0,
-        st.session_state.slider_values["tempo"],
-        0.5,
-        help="Overall estimated tempo in beats per minute (BPM)"
-    )
-    st.session_state.slider_values["tempo"] = tempo
+    with col_feat9:
+        instrumentalness = st.slider(
+            "Instrumentalness",
+            0.0, 1.0,
+            st.session_state.slider_values["instrumentalness"],
+            0.01,
+            help="Predicts whether track has no vocals (0-1)"
+        )
+        st.session_state.slider_values["instrumentalness"] = instrumentalness
     
-    duration_ms = st.slider(
-        "Duration (seconds)",
-        30000, 600000,
-        int(st.session_state.slider_values["duration_ms"]),
-        1000,
-        help="Duration of the track in milliseconds"
-    )
-    st.session_state.slider_values["duration_ms"] = duration_ms
+    # Row 5: Liveness, Valence, Tempo
+    col_feat10, col_feat11, col_feat12 = st.columns(3)
+    with col_feat10:
+        liveness = st.slider(
+            "Liveness",
+            0.0, 1.0,
+            st.session_state.slider_values["liveness"],
+            0.01,
+            help="Detects presence of audience in recording (0-1)"
+        )
+        st.session_state.slider_values["liveness"] = liveness
     
-    explicit = st.selectbox(
-        "Explicit Content",
-        [0, 1],
-        index=st.session_state.slider_values["explicit"],
-        format_func=lambda x: "No" if x == 0 else "Yes",
-        help="Whether the track has explicit lyrics"
-    )
-    st.session_state.slider_values["explicit"] = explicit
+    with col_feat11:
+        valence = st.slider(
+            "Valence",
+            0.0, 1.0,
+            st.session_state.slider_values["valence"],
+            0.01,
+            help="Musical positiveness conveyed by track (0-1)"
+        )
+        st.session_state.slider_values["valence"] = valence
+    
+    with col_feat12:
+        tempo = st.slider(
+            "Tempo (BPM)",
+            0.0, 250.0,
+            st.session_state.slider_values["tempo"],
+            0.5,
+            help="Estimated tempo in beats per minute"
+        )
+        st.session_state.slider_values["tempo"] = tempo
+    
+    # Row 6: Duration and Explicit
+    col_feat13, col_feat14 = st.columns(2)
+    with col_feat13:
+        duration_ms = st.slider(
+            "Duration (seconds)",
+            30000, 600000,
+            int(st.session_state.slider_values["duration_ms"]),
+            1000,
+            help="Duration of the track in milliseconds"
+        )
+        st.session_state.slider_values["duration_ms"] = duration_ms
+    
+    with col_feat14:
+        explicit = st.selectbox(
+            "Explicit Content",
+            [0, 1],
+            index=st.session_state.slider_values["explicit"],
+            format_func=lambda x: "No" if x == 0 else "Yes",
+            help="Whether the track has explicit lyrics"
+        )
+        st.session_state.slider_values["explicit"] = explicit
     
     st.markdown('</div>', unsafe_allow_html=True)
     
@@ -580,23 +659,39 @@ with left:
 with right:
     st.markdown('<div class="chart-card">', unsafe_allow_html=True)
     
-    if predict_button:
-        features = {
-            "danceability": danceability,
-            "energy": energy,
-            "loudness": loudness,
-            "speechiness": speechiness,
-            "acousticness": acousticness,
-            "instrumentalness": instrumentalness,
-            "liveness": liveness,
-            "valence": valence,
-            "tempo": tempo,
-            "duration_ms": duration_ms,
-            "explicit": explicit
-        }
-        
+    if predict_button and model is not None and scaler is not None:
         try:
-            prediction = predict_popularity(features)
+            # Build feature DataFrame with all 14 features in the correct order
+            feature_dict = {
+                "danceability": danceability,
+                "energy": energy,
+                "key": key,
+                "loudness": loudness,
+                "mode": mode,
+                "speechiness": speechiness,
+                "acousticness": acousticness,
+                "instrumentalness": instrumentalness,
+                "liveness": liveness,
+                "valence": valence,
+                "tempo": tempo,
+                "duration_ms": duration_ms,
+                "explicit": explicit,
+                "year": year
+            }
+            
+            input_df = pd.DataFrame([feature_dict])
+            
+            # Ensure features are in the correct order
+            input_df = input_df[FEATURE_NAMES]
+            
+            # Scale features
+            scaled_features = scaler.transform(input_df)
+            
+            # Make prediction
+            prediction = model.predict(scaled_features)[0]
+            
+            # Clamp to valid range
+            prediction = max(0, min(100, prediction))
             
             # Display KPI card
             label, color = get_prediction_label(prediction)
@@ -625,6 +720,8 @@ with right:
         except Exception as e:
             st.error(f"Error making prediction: {str(e)}")
             st.info("Please ensure all features are within valid ranges and try again.")
+    elif predict_button and (model is None or scaler is None):
+        st.error("Model or scaler not loaded. Please check that the model files exist.")
     else:
         st.markdown("""
         <div style="text-align:center; padding:40px 0; color:#B3B3B3;">
@@ -667,11 +764,15 @@ with col_summary1:
     st.write(f"**Energy:** {level}")
     st.progress(val, text=f"{energy:.2f}")
     
+    key_name = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"][key]
+    mode_name = "Minor" if mode == 0 else "Major"
+    st.write(f"**Key:** {key_name} {mode_name}")
+
+with col_summary2:
     loudness_normalized = 1 - (abs(loudness) / 60)
     st.write(f"**Loudness:** {get_feature_level(loudness_normalized)[0]}")
     st.progress(loudness_normalized, text=f"{loudness:.1f} dB")
-
-with col_summary2:
+    
     level, val = get_feature_level(speechiness)
     st.write(f"**Speechiness:** {level}")
     st.progress(val, text=f"{speechiness:.2f}")
@@ -679,12 +780,12 @@ with col_summary2:
     level, val = get_feature_level(acousticness)
     st.write(f"**Acousticness:** {level}")
     st.progress(val, text=f"{acousticness:.2f}")
-    
+
+with col_summary3:
     level, val = get_feature_level(instrumentalness)
     st.write(f"**Instrumentalness:** {level}")
     st.progress(val, text=f"{instrumentalness:.3f}")
-
-with col_summary3:
+    
     level, val = get_feature_level(liveness)
     st.write(f"**Liveness:** {level}")
     st.progress(val, text=f"{liveness:.2f}")
@@ -704,6 +805,17 @@ with col_summary3:
         tempo_val = 0.3
     st.write(f"**Tempo:** {tempo_level}")
     st.progress(tempo_val, text=f"{tempo:.1f} BPM")
+
+# Show duration and year
+col_summary4, col_summary5 = st.columns(2)
+with col_summary4:
+    duration_seconds = duration_ms / 1000
+    st.write(f"**Duration:** {duration_seconds:.1f} seconds")
+    duration_normalized = duration_ms / 600000
+    st.progress(duration_normalized, text=f"{duration_seconds:.1f}s / 600s")
+
+with col_summary5:
+    st.write(f"**Release Year:** {year}")
 
 st.markdown('</div>', unsafe_allow_html=True)
 
@@ -727,11 +839,11 @@ with col_insight1:
         • <b>Playlist Curators</b>: Identify tracks that will resonate with audiences<br>
         • <b>Marketing Teams</b>: Prioritize songs with higher predicted popularity
         </div>
-        <div style="color:#FFFFFF; font-weight:600; font-size:18px; margin-top:16px; margin-bottom:12px;">Key Factors</div>
+        <div style="color:#FFFFFF; font-weight:600; font-size:18px; margin-top:16px; margin-bottom:12px;">Model Information</div>
         <div style="color:#B3B3B3; font-size:14px; line-height:1.8;">
-        • Danceability and energy are strong predictors of popularity<br>
-        • Valence (positivity) can significantly impact listener engagement<br>
-        • Acousticness and instrumentalness may limit mainstream appeal
+        • Trained on <b>{len(songs):,}</b> Spotify songs using <b>Random Forest</b><br>
+        • Uses <b>14</b> audio features to predict popularity score<br>
+        • All predictions are scaled between <b>0-100</b> for easy interpretation
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -761,4 +873,4 @@ with col_insight2:
 # -----------------------------
 
 st.markdown("<div style='height:30px'></div>", unsafe_allow_html=True)
-st.caption(f"Updated: {pd.Timestamp.now().strftime('%Y-%m-%d %H:%M')}  •  {len(songs):,} Songs  •  AI Popularity Predictor")
+st.caption(f"Updated: {pd.Timestamp.now().strftime('%Y-%m-%d %H:%M')}  •  {len(songs):,} Songs  •  Random Forest Predictor")
