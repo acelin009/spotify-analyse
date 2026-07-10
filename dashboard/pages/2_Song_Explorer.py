@@ -8,7 +8,6 @@ import plotly.express as px
 import base64
 
 from data_loader import load_data
-from streamlit_searchbox import st_searchbox
 
 # -----------------------------
 # Page Configuration
@@ -220,46 +219,20 @@ def convert_csv(df):
     """Convert dataframe to CSV with caching."""
     return df.to_csv(index=False).encode("utf-8")
 
-# -----------------------------
-# Search functions for autocomplete
-# -----------------------------
+@st.cache_data
+def get_song_options():
+    """Get sorted list of unique song names with 'All' option."""
+    song_list = sorted(songs["name"].dropna().unique().tolist())
+    return ["All"] + song_list
 
-def search_songs(searchterm: str) -> list:
-    """Search for songs by name (case-insensitive, partial match)."""
-    if not searchterm:
-        return []
-    
-    results = (
-        songs[
-            songs["name"].str.contains(searchterm, case=False, na=False)
-        ]
-        .sort_values("popularity", ascending=False)
-        ["name"]
-        .drop_duplicates()
-        .head(10)
-        .tolist()
-    )
-    return results
-
-def search_artists(searchterm: str) -> list:
-    """Search for artists by name (case-insensitive, partial match)."""
-    if not searchterm:
-        return []
-    
-    results = (
-        songs[
-            songs["artists"].str.contains(searchterm, case=False, na=False)
-        ]
-        .sort_values("popularity", ascending=False)
-        ["artists"]
-        .drop_duplicates()
-        .head(10)
-        .tolist()
-    )
-    return results
+@st.cache_data
+def get_artist_options():
+    """Get sorted list of unique artist names with 'All' option."""
+    artist_list = sorted(songs["artists"].dropna().unique().tolist())
+    return ["All"] + artist_list
 
 # -----------------------------
-# Hero Header (same as Overview)
+# Hero Header
 # -----------------------------
 
 st.markdown('<div class="hero-wrapper">', unsafe_allow_html=True)
@@ -327,26 +300,30 @@ st.markdown('<div class="chart-card">', unsafe_allow_html=True)
 # Create a copy of the original dataframe for filtering
 filtered = songs.copy()
 
-# Row 1: Song Search and Artist Search (Autocomplete)
+# Row 1: Song Selector and Artist Selector
 col1, col2 = st.columns([2, 1])
 
 with col1:
-    selected_song = st_searchbox(
-        search_songs,
+    song_options = get_song_options()
+    selected_song = st.selectbox(
+        "Song Name",
+        options=song_options,
+        index=0,
         placeholder="Type to search for a song...",
-        label="Song Name",
         label_visibility="collapsed"
     )
-    st.caption("Search by song name")
+    st.caption("Search by song name - type to filter")
 
 with col2:
-    selected_artist = st_searchbox(
-        search_artists,
+    artist_options = get_artist_options()
+    selected_artist = st.selectbox(
+        "Artist Name",
+        options=artist_options,
+        index=0,
         placeholder="Type to search for an artist...",
-        label="Artist Name",
         label_visibility="collapsed"
     )
-    st.caption("Search by artist name")
+    st.caption("Search by artist name - type to filter")
 
 # Row 2: Year and Popularity Sliders
 col3, col4 = st.columns(2)
@@ -390,12 +367,12 @@ st.markdown("<div style='height: 32px;'></div>", unsafe_allow_html=True)
 # Apply all filters
 # -----------------------------
 
-# 1. Song filter - exact match if selected
-if selected_song:
+# 1. Song filter - exact match if selected (not "All")
+if selected_song and selected_song != "All":
     filtered = filtered[filtered["name"] == selected_song]
 
-# 2. Artist filter - exact match if selected
-if selected_artist:
+# 2. Artist filter - exact match if selected (not "All")
+if selected_artist and selected_artist != "All":
     filtered = filtered[filtered["artists"] == selected_artist]
 
 # 3. Year range filter
@@ -635,8 +612,8 @@ st.markdown("<div style='height: 32px;'></div>", unsafe_allow_html=True)
 
 with st.expander("Active Filters"):
     st.markdown(f"""
-    - **Song:** {selected_song if selected_song else 'All'}
-    - **Artist:** {selected_artist if selected_artist else 'All'}
+    - **Song:** {selected_song if selected_song and selected_song != "All" else 'All'}
+    - **Artist:** {selected_artist if selected_artist and selected_artist != "All" else 'All'}
     - **Year Range:** {year_range[0]} - {year_range[1]}
     - **Popularity Range:** {popularity[0]} - {popularity[1]}
     - **Explicit Content:** {explicit}
