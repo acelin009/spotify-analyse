@@ -1,0 +1,13 @@
+{
+    "model_name": "random_forest",
+    "timestamp": "2026-07-10T12:32:15.741752",
+    "metrics": {
+        "MAE": 6.6364562578926005,
+        "MSE": 89.40851333517854,
+        "RMSE": 9.455607507462359,
+        "R2": 0.8131550952321942,
+        "MAPE": 34.284868288972326
+    },
+    "dataset": "Spotify Tracks",
+    "target_column": "popularity"
+}
