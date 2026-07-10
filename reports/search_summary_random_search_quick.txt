@@ -1,0 +1,16 @@
+======================================================================
+HYPERPARAMETER SEARCH SUMMARY
+======================================================================
+
+Method: RANDOM_SEARCH_QUICK
+Date: 2026-07-10 12:54:38
+Best Score (R2): 0.8057
+
+Best Parameters:
+  n_estimators        : 200
+  min_samples_split   : 2
+  min_samples_leaf    : 2
+  max_features        : log2
+  max_depth           : 20
+
+======================================================================

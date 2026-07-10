@@ -1,0 +1,20 @@
+{
+    "model": "RandomForestRegressor",
+    "method": "random_search_quick",
+    "best_params": {
+        "n_estimators": 200,
+        "min_samples_split": 2,
+        "min_samples_leaf": 2,
+        "max_features": "log2",
+        "max_depth": 20
+    },
+    "best_score": 0.8056652747920364,
+    "test_metrics": {
+        "MAE": 6.779684261686906,
+        "MSE": 90.04346373903729,
+        "RMSE": 9.489123444187944,
+        "R2": 0.8118281830253385,
+        "MAPE": 35.98758138152743
+    },
+    "timestamp": "2026-07-10T12:54:39.311036"
+}
