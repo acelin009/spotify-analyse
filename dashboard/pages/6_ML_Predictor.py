@@ -245,13 +245,28 @@ st.markdown("""
 @st.cache_resource
 def load_model_and_scaler():
     """Load the trained Random Forest model and scaler from disk."""
-    # The models folder is at the project root, not inside dashboard
-    # Path(__file__).parent.parent goes from pages/ to dashboard/
-    # So we need to go up one more level to reach the project root
-    base_dir = Path(__file__).parent.parent.parent
+    # The models folder is at the project root
+    # Path(__file__).parent = /project/dashboard/pages/
+    # Path(__file__).parent.parent = /project/dashboard/
+    # Path(__file__).parent.parent.parent = /project/
+    base_dir = Path(__file__).resolve().parent.parent.parent
     
-    model_path = base_dir / "models" / "random_forest_model.pkl"
+    # Try the smaller model first (better for Streamlit Cloud)
+    model_path = base_dir / "models" / "best_model_random_search_quick.pkl"
     scaler_path = base_dir / "models" / "scaler.pkl"
+    
+    # If the smaller model doesn't exist, try the full model
+    if not model_path.exists():
+        st.warning(f"Smaller model not found at {model_path}, trying random_forest_model.pkl")
+        model_path = base_dir / "models" / "random_forest_model.pkl"
+    
+    # Debug info (remove after confirming it works)
+    st.write("### Debug Info (remove later)")
+    st.write(f"Base directory: {base_dir}")
+    st.write(f"Model path: {model_path}")
+    st.write(f"Model exists: {model_path.exists()}")
+    st.write(f"Scaler path: {scaler_path}")
+    st.write(f"Scaler exists: {scaler_path.exists()}")
     
     if not model_path.exists():
         st.error(f"Model not found at {model_path}. Please train the model first.")
@@ -264,6 +279,7 @@ def load_model_and_scaler():
     try:
         model = joblib.load(model_path)
         scaler = joblib.load(scaler_path)
+        st.success("Model and scaler loaded successfully!")
         return model, scaler
     except Exception as e:
         st.error(f"Error loading model or scaler: {str(e)}")
