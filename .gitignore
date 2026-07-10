@@ -24,7 +24,14 @@ Thumbs.db
 desktop.ini
 
 # Project specific - LARGE FILES
-models/
+
+# Ignore only the large model
+models/best_model_random_search_quick.pkl
+
+# Keep deployment model
+!models/random_forest_model.pkl
+!models/scaler.pkl
+
 *.joblib
 *.h5
 *.pt
