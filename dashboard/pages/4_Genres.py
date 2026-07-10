@@ -28,14 +28,14 @@ if logo_path.exists():
     except:
         st.set_page_config(
             page_title="Genre Analytics • Spotify Music Intelligence",
-            page_icon="",
+            page_icon="🎸",
             layout="wide",
             initial_sidebar_state="expanded"
         )
 else:
     st.set_page_config(
         page_title="Genre Analytics • Spotify Music Intelligence",
-        page_icon="",
+        page_icon="🎸",
         layout="wide",
         initial_sidebar_state="expanded"
     )
@@ -258,31 +258,31 @@ FEATURES_COMPARE = [
 # -----------------------------
 def create_radar_chart(data_a, data_b, features, label_a, label_b, title):
     """
-    Create a radar chart comparing two entities with dark grey color scheme.
+    Create a radar chart comparing two entities.
     """
     fig = go.Figure()
     
-    # Entity A - Dark grey
+    # Entity A
     fig.add_trace(
         go.Scatterpolar(
             r=[data_a[f] for f in features],
             theta=[f.capitalize() for f in features],
             fill="toself",
             name=label_a,
-            line=dict(color="#888888"),
-            fillcolor="rgba(136, 136, 136, 0.25)"
+            line=dict(color="#1DB954"),
+            fillcolor="rgba(29, 185, 84, 0.3)"
         )
     )
     
-    # Entity B - Lighter grey
+    # Entity B
     fig.add_trace(
         go.Scatterpolar(
             r=[data_b[f] for f in features],
             theta=[f.capitalize() for f in features],
             fill="toself",
             name=label_b,
-            line=dict(color="#BBBBBB"),
-            fillcolor="rgba(187, 187, 187, 0.2)"
+            line=dict(color="#43D17D"),
+            fillcolor="rgba(67, 209, 125, 0.25)"
         )
     )
     
@@ -321,9 +321,9 @@ def generate_comparison_summary(entity_a, entity_b, label_a, label_b, features):
             if entity_a[feature] > entity_b[feature]:
                 diff = abs(entity_a[feature] - entity_b[feature])
                 if feature == "popularity":
-                    advantages_a.append(f"• {feature.capitalize()} ({diff:.1f} higher)")
+                    advantages_a.append(f"✅ {feature.capitalize()} ({diff:.1f} higher)")
                 else:
-                    advantages_a.append(f"• {feature.capitalize()} ({diff:.3f} higher)")
+                    advantages_a.append(f"✅ {feature.capitalize()} ({diff:.3f} higher)")
         
         if advantages_a:
             for adv in advantages_a:
@@ -344,9 +344,9 @@ def generate_comparison_summary(entity_a, entity_b, label_a, label_b, features):
             if entity_b[feature] > entity_a[feature]:
                 diff = abs(entity_b[feature] - entity_a[feature])
                 if feature == "popularity":
-                    advantages_b.append(f"• {feature.capitalize()} ({diff:.1f} higher)")
+                    advantages_b.append(f"✅ {feature.capitalize()} ({diff:.1f} higher)")
                 else:
-                    advantages_b.append(f"• {feature.capitalize()} ({diff:.3f} higher)")
+                    advantages_b.append(f"✅ {feature.capitalize()} ({diff:.3f} higher)")
         
         if advantages_b:
             for adv in advantages_b:
@@ -477,7 +477,7 @@ fig_top = px.bar(
     y="genres",
     orientation="h",
     color="popularity",
-    color_continuous_scale=["#555555", "#888888", "#BBBBBB"],
+    color_continuous_scale=["#169C46", "#1DB954", "#1ED760"],
     title="Top Genres by Average Popularity",
     labels={
         "popularity": "Average Popularity",
@@ -711,7 +711,7 @@ heatmap_top50 = heatmap_data.loc[top50_genres]
 fig_heatmap = px.imshow(
     heatmap_top50,
     aspect="auto",
-    color_continuous_scale="Greys",
+    color_continuous_scale="Viridis",
     labels=dict(x="Audio Features", y="Genre", color="Value")
 )
 
@@ -746,7 +746,7 @@ fig_scatter = px.scatter(
     size="danceability",
     hover_name="genres",
     color="valence",
-    color_continuous_scale="Greys",
+    color_continuous_scale="Viridis",
     labels={
         "energy": "Energy Score",
         "popularity": "Popularity Score",
