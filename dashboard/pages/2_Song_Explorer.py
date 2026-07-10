@@ -219,18 +219,6 @@ def convert_csv(df):
     """Convert dataframe to CSV with caching."""
     return df.to_csv(index=False).encode("utf-8")
 
-@st.cache_data
-def get_song_list():
-    """Get sorted list of unique song names with 'All' option."""
-    song_list = sorted(songs["name"].dropna().unique())
-    return [""] + song_list
-
-@st.cache_data
-def get_artist_list():
-    """Get sorted list of unique artist names with 'All' option."""
-    artist_list = sorted(songs["artists"].dropna().unique())
-    return [""] + artist_list
-
 # -----------------------------
 # Hero Header (same as Overview)
 # -----------------------------
@@ -304,12 +292,12 @@ filtered = songs.copy()
 col1, col2 = st.columns([2, 1])
 
 with col1:
-    # Get song list with caching for performance
-    song_list = get_song_list()
+    # Create song list with "All" option
+    song_options = [""] + sorted(songs["name"].dropna().unique().tolist())
     
     selected_song = st.selectbox(
         "Song Name",
-        options=song_list,
+        options=song_options,
         index=0,
         placeholder="Type to search for a song...",
         label_visibility="collapsed"
@@ -317,12 +305,12 @@ with col1:
     st.caption("Search by song name")
 
 with col2:
-    # Get artist list with caching for performance
-    artist_list = get_artist_list()
+    # Create artist list with "All" option
+    artist_options = [""] + sorted(songs["artists"].dropna().unique().tolist())
     
     selected_artist = st.selectbox(
         "Artist Name",
-        options=artist_list,
+        options=artist_options,
         index=0,
         placeholder="Type to search for an artist...",
         label_visibility="collapsed"
