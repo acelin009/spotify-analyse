@@ -245,40 +245,47 @@ st.markdown("""
 @st.cache_resource
 def load_model_and_scaler():
     """Load the trained Random Forest model and scaler from disk."""
-    # The models folder is at the project root
-    # Path(__file__).parent = /project/dashboard/pages/
-    # Path(__file__).parent.parent = /project/dashboard/
-    # Path(__file__).parent.parent.parent = /project/
     base_dir = Path(__file__).resolve().parent.parent.parent
     
-    # Try the smaller model first (better for Streamlit Cloud)
-    model_path = base_dir / "models" / "best_model_random_search_quick.pkl"
+    # Use the full model (75 MB) - you decided to deploy this one
+    model_path = base_dir / "models" / "random_forest_model.pkl"
     scaler_path = base_dir / "models" / "scaler.pkl"
     
-    # If the smaller model doesn't exist, try the full model
-    if not model_path.exists():
-        st.warning(f"Smaller model not found at {model_path}, trying random_forest_model.pkl")
-        model_path = base_dir / "models" / "random_forest_model.pkl"
-    
-    # Debug info (remove after confirming it works)
-    st.write("### Debug Info (remove later)")
+    # DEBUG: Show what's in the project root
+    st.write("### Debug: Files in project root")
     st.write(f"Base directory: {base_dir}")
+    
+    # List all items in the project root
+    items = sorted([item.name for item in base_dir.iterdir()])
+    st.write(f"Items in project root: {items}")
+    
+    # Check if models folder exists
+    models_dir = base_dir / "models"
+    st.write(f"Models directory exists: {models_dir.exists()}")
+    
+    if models_dir.exists():
+        model_files = sorted([f.name for f in models_dir.iterdir()])
+        st.write(f"Files in models folder: {model_files}")
+    
+    st.write("---")
     st.write(f"Model path: {model_path}")
     st.write(f"Model exists: {model_path.exists()}")
     st.write(f"Scaler path: {scaler_path}")
     st.write(f"Scaler exists: {scaler_path.exists()}")
     
     if not model_path.exists():
-        st.error(f"Model not found at {model_path}. Please train the model first.")
+        st.error(f"Model not found at {model_path}")
+        st.info("Make sure the models folder is committed to GitHub and pushed.")
         return None, None
     
     if not scaler_path.exists():
-        st.error(f"Scaler not found at {scaler_path}. Please train the model first.")
+        st.error(f"Scaler not found at {scaler_path}")
         return None, None
     
     try:
-        model = joblib.load(model_path)
-        scaler = joblib.load(scaler_path)
+        with st.spinner("Loading model and scaler..."):
+            model = joblib.load(model_path)
+            scaler = joblib.load(scaler_path)
         st.success("Model and scaler loaded successfully!")
         return model, scaler
     except Exception as e:
