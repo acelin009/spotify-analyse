@@ -320,13 +320,13 @@ def create_gauge_chart(value, title="Predicted Popularity"):
 def get_prediction_label(prediction):
     """Get category label based on popularity score."""
     if prediction >= 80:
-        return "🔥 Potential Hit", "success"
+        return "Potential Hit", "success"
     elif prediction >= 60:
         return "🎵 Above Average", "info"
     elif prediction >= 40:
-        return "🙂 Average Potential", "warning"
+        return "Average Potential", "warning"
     else:
-        return "📉 Low Popularity Potential", "error"
+        return "Low Popularity Potential", "error"
 
 def get_example_songs():
     """Get a list of example songs from the dataset."""
@@ -614,13 +614,13 @@ with right:
             
             # Show confidence level
             if prediction >= 80:
-                st.progress(0.9, text="🔥 High confidence - This song has hit potential!")
+                st.progress(0.9, text="High confidence - This song has hit potential!")
             elif prediction >= 60:
-                st.progress(0.7, text="🎵 Good confidence - Above average track")
+                st.progress(0.7, text="Good confidence - Above average track")
             elif prediction >= 40:
-                st.progress(0.5, text="🙂 Moderate confidence - Average potential")
+                st.progress(0.5, text="Moderate confidence - Average potential")
             else:
-                st.progress(0.3, text="📉 Low confidence - May need improvements")
+                st.progress(0.3, text="Low confidence - May need improvements")
                 
         except Exception as e:
             st.error(f"Error making prediction: {str(e)}")
