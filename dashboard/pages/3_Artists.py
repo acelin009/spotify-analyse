@@ -50,6 +50,9 @@ songs, artists, genres, years, songs_with_genres = load_data()
 artist_song_counts = songs.groupby('artists').size().reset_index(name='song_count')
 artists_with_counts = artists.merge(artist_song_counts, on='artists', how='left')
 
+# Fill NaN values in song_count with 0 (artists with no songs)
+artists_with_counts['song_count'] = artists_with_counts['song_count'].fillna(0)
+
 # -----------------------------
 # Load Custom CSS
 # -----------------------------
