@@ -5,6 +5,7 @@ import pandas as pd
 from pathlib import Path
 from PIL import Image
 import plotly.express as px
+import plotly.graph_objects as go
 import base64
 
 from data_loader import load_data
@@ -460,26 +461,77 @@ with chart_col1:
         <div class="chart-title">Popularity Distribution</div>
     """, unsafe_allow_html=True)
     
-    pop_fig = px.histogram(
-        filtered.head(1000),
-        x="popularity",
-        nbins=20,
-        color_discrete_sequence=["#1DB954"]
-    )
+    # Create more detailed popularity distribution with KDE
+    pop_fig = go.Figure()
+    
+    # Add histogram
+    pop_fig.add_trace(go.Histogram(
+        x=filtered["popularity"],
+        nbinsx=30,
+        name="Distribution",
+        marker_color="#1DB954",
+        opacity=0.8,
+        hovertemplate="Popularity: %{x}<br>Count: %{y}<extra></extra>"
+    ))
+    
+    # Add KDE line using plotly express density
+    import numpy as np
+    from scipy import stats
+    
+    # Calculate KDE
+    if len(filtered) > 1:
+        kde = stats.gaussian_kde(filtered["popularity"])
+        x_range = np.linspace(0, 100, 200)
+        y_range = kde(x_range) * len(filtered) * (100 / 30)  # Scale to match histogram
+        
+        pop_fig.add_trace(go.Scatter(
+            x=x_range,
+            y=y_range,
+            mode="lines",
+            name="Density (KDE)",
+            line=dict(color="#FF6B6B", width=2.5),
+            hovertemplate="Popularity: %{x:.0f}<br>Density: %{y:.1f}<extra></extra>"
+        ))
     
     pop_fig.update_layout(
         template="plotly_dark",
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
         font=dict(color="#B3B3B3", size=11),
-        showlegend=False,
+        showlegend=True,
+        legend=dict(
+            font=dict(color="#B3B3B3"),
+            bgcolor="rgba(0,0,0,0.5)",
+            bordercolor="#282828",
+            borderwidth=1
+        ),
         margin=dict(l=10, r=10, t=10, b=10),
-        height=250,
-        xaxis=dict(gridcolor="#282828", zeroline=False),
-        yaxis=dict(gridcolor="#282828", zeroline=False)
+        height=300,
+        xaxis=dict(
+            gridcolor="#282828", 
+            zeroline=False,
+            title="Popularity",
+            title_font=dict(color="#B3B3B3")
+        ),
+        yaxis=dict(
+            gridcolor="#282828", 
+            zeroline=False,
+            title="Number of Songs",
+            title_font=dict(color="#B3B3B3")
+        ),
+        barmode="overlay"
     )
     
-    pop_fig.update_traces(marker=dict(line=dict(width=0)))
+    # Add mean line
+    mean_pop = filtered["popularity"].mean() if not filtered.empty else 0
+    pop_fig.add_vline(
+        x=mean_pop,
+        line_dash="dash",
+        line_color="#FFD700",
+        line_width=2,
+        annotation_text=f"Mean: {mean_pop:.1f}",
+        annotation_font=dict(color="#FFD700", size=11)
+    )
     
     st.plotly_chart(pop_fig, use_container_width=True, config={"displayModeBar": False})
     st.markdown('</div>', unsafe_allow_html=True)
@@ -496,7 +548,8 @@ with chart_col2:
         y="energy",
         color="popularity",
         color_continuous_scale=["#169C46", "#1DB954", "#1ED760"],
-        opacity=0.6
+        opacity=0.6,
+        hover_data=["name", "artists"]
     )
     
     scatter_fig.update_layout(
@@ -506,9 +559,23 @@ with chart_col2:
         font=dict(color="#B3B3B3", size=11),
         showlegend=False,
         margin=dict(l=10, r=10, t=10, b=10),
-        height=250,
-        xaxis=dict(gridcolor="#282828", zeroline=False),
-        yaxis=dict(gridcolor="#282828", zeroline=False)
+        height=300,
+        xaxis=dict(
+            gridcolor="#282828", 
+            zeroline=False,
+            title="Danceability",
+            title_font=dict(color="#B3B3B3")
+        ),
+        yaxis=dict(
+            gridcolor="#282828", 
+            zeroline=False,
+            title="Energy",
+            title_font=dict(color="#B3B3B3")
+        ),
+        coloraxis_colorbar=dict(
+            title=dict(text="Popularity", font=dict(color="#B3B3B3")),
+            tickfont=dict(color="#B3B3B3")
+        )
     )
     
     st.plotly_chart(scatter_fig, use_container_width=True, config={"displayModeBar": False})
