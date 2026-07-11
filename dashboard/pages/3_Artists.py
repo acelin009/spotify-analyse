@@ -576,8 +576,8 @@ if artist1_search and artist2_search:
                 theta=[f.capitalize() for f in features],
                 fill="toself",
                 name=b['artists'],
-                line=dict(color="#43D17D"),
-                fillcolor="rgba(67, 209, 125, 0.25)"
+                line=dict(color="#888888"),
+                fillcolor="rgba(136, 136, 136, 0.25)"
             ))
 
             fig_radar.update_layout(
