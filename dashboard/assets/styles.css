@@ -16,10 +16,10 @@ header[data-testid="stHeader"] {
     box-shadow: none !important;
 }
 
-/* Hide toolbar */
-[data-testid="stToolbar"] {
+/* Hide toolbar - commented out to keep sidebar toggle */
+/* [data-testid="stToolbar"] {
     display: none !important;
-}
+} */
 
 /* Hide decoration */
 [data-testid="stDecoration"] {
