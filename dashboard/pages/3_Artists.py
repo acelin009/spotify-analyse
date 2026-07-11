@@ -737,7 +737,7 @@ if len(artists_clean) > 0:
         annotation_font=dict(color="#FFFFFF", size=12)
     )
 
-    # Add quadrant labels with bright green - fixed font parameters
+    # Add quadrant labels with bright green
     fig_quadrant.add_annotation(
         x=0.85,
         y=88,
@@ -820,8 +820,7 @@ if len(artists_clean) > 0:
             borderpad=6
         ),
         coloraxis_colorbar=dict(
-            title=dict(text="Energy", font=dict(color="#FFFFFF", size=13)),
-            tickfont=dict(color="#FFFFFF", size=11)
+            title=dict(text="Energy", font=dict(color="#FFFFFF", size=13))
         )
     )
 
