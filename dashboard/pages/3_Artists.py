@@ -506,7 +506,7 @@ if artist1_search and artist2_search:
             # Artist B
             with col2:
                 st.markdown(f"""
-                <div style="color:#FFFFFF; font-size:24px; font-weight:700; margin-bottom:16px;">🎤 {b['artists']}</div>
+                <div style="color:#FFFFFF; font-size:24px; font-weight:700; margin-bottom:16px;">{b['artists']}</div>
                 """, unsafe_allow_html=True)
                 
                 metrics_col3, metrics_col4 = st.columns(2)

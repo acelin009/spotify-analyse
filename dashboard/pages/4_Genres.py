@@ -274,15 +274,15 @@ def create_radar_chart(data_a, data_b, features, label_a, label_b, title):
         )
     )
     
-    # Entity B
+    # Entity B - Changed to dark grey
     fig.add_trace(
         go.Scatterpolar(
             r=[data_b[f] for f in features],
             theta=[f.capitalize() for f in features],
             fill="toself",
             name=label_b,
-            line=dict(color="#43D17D"),
-            fillcolor="rgba(67, 209, 125, 0.25)"
+            line=dict(color="#888888"),
+            fillcolor="rgba(136, 136, 136, 0.25)"
         )
     )
     
