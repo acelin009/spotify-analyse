@@ -186,10 +186,19 @@ with mini_left:
         plot_bgcolor="rgba(0,0,0,0)",
         font=dict(color="#B3B3B3", size=12),
         showlegend=False,
-        margin=dict(l=10, r=10, t=10, b=10),
+        margin=dict(l=10, r=10, t=0, b=10),
         height=280,
-        xaxis=dict(gridcolor="#282828", zeroline=False, title_font=dict(color="#B3B3B3")),
-        yaxis=dict(gridcolor="#282828", zeroline=False, title_font=dict(color="#B3B3B3")),
+        xaxis=dict(
+            gridcolor="#282828", 
+            zeroline=False, 
+            title_font=dict(color="#B3B3B3")
+        ),
+        yaxis=dict(
+            gridcolor="#282828", 
+            zeroline=False, 
+            title_font=dict(color="#B3B3B3")
+        ),
+        title=None
     )
     
     pop_fig.update_traces(marker=dict(line=dict(width=0)))
@@ -220,10 +229,19 @@ with mini_right:
         plot_bgcolor="rgba(0,0,0,0)",
         font=dict(color="#B3B3B3", size=12),
         showlegend=False,
-        margin=dict(l=10, r=10, t=10, b=10),
+        margin=dict(l=10, r=10, t=0, b=10),
         height=280,
-        xaxis=dict(gridcolor="#282828", zeroline=False, title_font=dict(color="#B3B3B3")),
-        yaxis=dict(gridcolor="#282828", zeroline=False, title_font=dict(color="#B3B3B3")),
+        xaxis=dict(
+            gridcolor="#282828", 
+            zeroline=False, 
+            title_font=dict(color="#B3B3B3")
+        ),
+        yaxis=dict(
+            gridcolor="#282828", 
+            zeroline=False, 
+            title_font=dict(color="#B3B3B3")
+        ),
+        title=None
     )
     
     genre_fig.update_traces(
