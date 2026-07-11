@@ -470,6 +470,7 @@ st.markdown('<div class="section-title">Top Genres</div>', unsafe_allow_html=Tru
 st.markdown('<div class="chart-card">', unsafe_allow_html=True)
 
 top20 = genres.sort_values("popularity", ascending=False).head(20)
+top20 = top20.iloc[::-1]
 
 fig_top = px.bar(
     top20,

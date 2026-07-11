@@ -347,6 +347,7 @@ st.markdown('<div class="section-title">Top 15 Artists</div>', unsafe_allow_html
 st.markdown('<div class="chart-card">', unsafe_allow_html=True)
 
 top15 = artists.sort_values("popularity", ascending=False).head(15)
+top15 = top15.iloc[::-1]
 
 fig_top = px.bar(
     top15,

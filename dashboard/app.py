@@ -216,7 +216,7 @@ with col_left:
     st.markdown('<div class="chart-card">', unsafe_allow_html=True)
     
     top_artists = artists.sort_values("popularity", ascending=False).head(10)
-    
+    top_artists = top_artists.iloc[::-1]
     artist_fig = px.bar(
         top_artists,
         x="popularity",

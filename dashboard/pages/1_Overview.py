@@ -209,6 +209,7 @@ with mini_right:
     
     # Get top genres
     top_genres = genres.sort_values("popularity", ascending=False).head(10)
+    top_genres = top_genres.iloc[::-1]
     
     genre_fig = px.bar(
         top_genres,
