@@ -46,6 +46,10 @@ else:
 
 songs, artists, genres, years, songs_with_genres = load_data()
 
+# Calculate number of songs per artist
+artist_song_counts = songs.groupby('artists').size().reset_index(name='song_count')
+artists_with_counts = artists.merge(artist_song_counts, on='artists', how='left')
+
 # -----------------------------
 # Load Custom CSS
 # -----------------------------
@@ -664,45 +668,67 @@ else:
 st.markdown("<div style='height:30px'></div>", unsafe_allow_html=True)
 
 # -----------------------------
-# Popularity Distribution
+# Artist Popularity vs Song Count (Bubble Chart)
 # -----------------------------
 
-st.markdown('<div class="section-title">Popularity Distribution</div>', unsafe_allow_html=True)
+st.markdown('<div class="section-title">Popularity vs Number of Songs</div>', unsafe_allow_html=True)
 
 st.markdown('<div class="chart-card">', unsafe_allow_html=True)
 
-fig_dist = px.histogram(
-    artists,
-    x="popularity",
-    nbins=20,
-    labels={"popularity": "Popularity Score", "count": "Number of Artists"},
-    color_discrete_sequence=["#1DB954"]
+# Create bubble chart
+fig_bubble = px.scatter(
+    artists_with_counts,
+    x="song_count",
+    y="popularity",
+    size="energy",
+    color="valence",
+    hover_name="artists",
+    hover_data={
+        "song_count": True,
+        "popularity": True,
+        "energy": True,
+        "valence": True,
+        "danceability": True
+    },
+    size_max=50,
+    color_continuous_scale="Viridis",
+    labels={
+        "song_count": "Number of Songs",
+        "popularity": "Average Popularity",
+        "energy": "Energy",
+        "valence": "Valence"
+    },
+    title="Artist Popularity vs Song Count"
 )
 
-fig_dist.update_layout(
+fig_bubble.update_layout(
     template="plotly_dark",
     paper_bgcolor="rgba(0,0,0,0)",
     plot_bgcolor="rgba(0,0,0,0)",
     font=dict(color="#B3B3B3", family="Inter, sans-serif", size=12),
-    showlegend=False,
-    margin=dict(l=10, r=10, t=10, b=10),
-    height=400,
-    bargap=0.1,
-    xaxis=dict(gridcolor="#282828", zeroline=False),
-    yaxis=dict(gridcolor="#282828", zeroline=False)
+    margin=dict(l=10, r=10, t=40, b=10),
+    height=500,
+    xaxis=dict(
+        gridcolor="#282828", 
+        zeroline=False,
+        title_font=dict(color="#B3B3B3"),
+        tickfont=dict(color="#B3B3B3")
+    ),
+    yaxis=dict(
+        gridcolor="#282828", 
+        zeroline=False,
+        title_font=dict(color="#B3B3B3"),
+        tickfont=dict(color="#B3B3B3")
+    ),
+    title_font=dict(color="#FFFFFF", size=16),
+    legend=dict(font=dict(color="#B3B3B3")),
+    coloraxis_colorbar=dict(
+        title=dict(text="Valence", font=dict(color="#B3B3B3")),
+        tickfont=dict(color="#B3B3B3")
+    )
 )
 
-fig_dist.add_vline(
-    x=artists['popularity'].mean(),
-    line_dash="dash",
-    line_color="#1DB954",
-    annotation_text=f"Mean: {artists['popularity'].mean():.1f}",
-    annotation_font=dict(color="#1DB954")
-)
-
-fig_dist.update_traces(marker=dict(line=dict(width=0)))
-
-st.plotly_chart(fig_dist, use_container_width=True, config={"displayModeBar": False})
+st.plotly_chart(fig_bubble, use_container_width=True, config={"displayModeBar": False})
 st.markdown('</div>', unsafe_allow_html=True)
 
 st.markdown("<div style='height:30px'></div>", unsafe_allow_html=True)
