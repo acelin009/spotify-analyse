@@ -87,7 +87,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # -----------------------------
-# Hero Header (same as Home page)
+# Hero Header
 # -----------------------------
 
 logo_path = Path(__file__).parent.parent / "assets" / "spotify_logo.png"
@@ -119,10 +119,10 @@ else:
     </div>
     """, unsafe_allow_html=True)
 
-st.markdown("<div style='height:4px'></div>", unsafe_allow_html=True)
+st.write("")
 
 # -----------------------------
-# Quick Stats Row (Compact Stats)
+# Quick Stats Row
 # -----------------------------
 
 col_stats1, col_stats2, col_stats3, col_stats4 = st.columns(4)
@@ -161,15 +161,16 @@ with col_stats4:
     </div>
     """, unsafe_allow_html=True)
 
+st.write("")
+
 # -----------------------------
-# Mini Charts Row (with Cards)
+# Mini Charts Row
 # -----------------------------
 
 mini_left, mini_right = st.columns(2)
 
 with mini_left:
-    st.markdown('<div class="table-card" style="padding: 16px 20px 12px 20px;">', unsafe_allow_html=True)
-    st.markdown('<div style="color:#FFFFFF; font-size:16px; font-weight:600; margin-bottom:8px;">Popularity Distribution</div>', unsafe_allow_html=True)
+    st.markdown("#### Popularity Distribution")
     
     pop_fig = px.histogram(
         songs,
@@ -202,11 +203,9 @@ with mini_left:
     pop_fig.update_traces(marker=dict(line=dict(width=0)))
     
     st.plotly_chart(pop_fig, use_container_width=True, config={"displayModeBar": False})
-    st.markdown('</div>', unsafe_allow_html=True)
 
 with mini_right:
-    st.markdown('<div class="table-card" style="padding: 16px 20px 12px 20px;">', unsafe_allow_html=True)
-    st.markdown('<div style="color:#FFFFFF; font-size:16px; font-weight:600; margin-bottom:8px;">Top Genres</div>', unsafe_allow_html=True)
+    st.markdown("#### Top Genres")
     
     # Get top genres
     top_genres = genres.sort_values("popularity", ascending=False).head(10)
@@ -248,14 +247,14 @@ with mini_right:
     )
     
     st.plotly_chart(genre_fig, use_container_width=True, config={"displayModeBar": False})
-    st.markdown('</div>', unsafe_allow_html=True)
+
+st.write("")
 
 # -----------------------------
-# Dataset Preview (with Card)
+# Dataset Preview
 # -----------------------------
 
-st.markdown('<div class="table-card" style="padding: 16px 20px 12px 20px;">', unsafe_allow_html=True)
-st.markdown('<div style="color:#FFFFFF; font-size:16px; font-weight:600; margin-bottom:8px;">Dataset Preview</div>', unsafe_allow_html=True)
+st.markdown("#### Dataset Preview")
 
 # Display dataframe with progress bars for popularity
 st.dataframe(
@@ -283,5 +282,3 @@ st.dataframe(
         ),
     }
 )
-
-st.markdown('</div>', unsafe_allow_html=True)

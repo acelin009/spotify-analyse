@@ -377,3 +377,47 @@ section[data-testid="stSidebarNav"] a[aria-current="page"] {
 .stSlider [role="slider"]:hover {
     box-shadow: 0 0 0 8px rgba(29,185,84,.25) !important;
 }
+
+/* Plotly charts - Style them as cards */
+div[data-testid="stPlotlyChart"] {
+    background: rgba(18, 18, 18, 0.82) !important;
+    border-radius: 20px !important;
+    padding: 16px !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    margin-bottom: 18px !important;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.45) !important;
+    transition: all 0.25s ease !important;
+}
+
+div[data-testid="stPlotlyChart"]:hover {
+    transform: translateY(-3px) !important;
+    background: rgba(35, 35, 35, 0.85) !important;
+    border-color: rgba(52, 52, 52, 0.5) !important;
+    box-shadow: 0 16px 45px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* DataFrame - Style it as a card */
+div[data-testid="stDataFrame"] {
+    background: rgba(18, 18, 18, 0.82) !important;
+    border-radius: 20px !important;
+    padding: 16px !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    margin-bottom: 18px !important;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.45) !important;
+    transition: all 0.25s ease !important;
+}
+
+div[data-testid="stDataFrame"]:hover {
+    transform: translateY(-3px) !important;
+    background: rgba(35, 35, 35, 0.85) !important;
+    border-color: rgba(52, 52, 52, 0.5) !important;
+    box-shadow: 0 16px 45px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Style h4 headers for section titles */
+h4 {
+    color: #FFFFFF !important;
+    font-weight: 700 !important;
+    margin-bottom: 10px !important;
+    letter-spacing: -0.3px !important;
+}
