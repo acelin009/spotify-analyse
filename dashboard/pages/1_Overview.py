@@ -26,14 +26,14 @@ if logo_path.exists():
     except:
         st.set_page_config(
             page_title="Overview • Spotify Music Intelligence",
-            page_icon="",
+            page_icon="🎵",
             layout="wide",
             initial_sidebar_state="expanded"
         )
 else:
     st.set_page_config(
         page_title="Overview • Spotify Music Intelligence",
-        page_icon="",
+        page_icon="🎵",
         layout="wide",
         initial_sidebar_state="expanded"
     )
@@ -87,8 +87,10 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # -----------------------------
-# Hero Header
+# Hero Header (same as Home page)
 # -----------------------------
+
+st.markdown('<div class="hero-wrapper">', unsafe_allow_html=True)
 
 logo_path = Path(__file__).parent.parent / "assets" / "spotify_logo.png"
 
@@ -97,30 +99,45 @@ if logo_path.exists():
         img_base64 = base64.b64encode(img_file.read()).decode()
 
     st.markdown(f"""
-    <div style="display: flex; align-items: center; gap: 22px; padding: 20px 0 10px 0;">
-        <img src="data:image/png;base64,{img_base64}" style="width: 120px; height: 120px; object-fit: contain; flex-shrink: 0;" alt="Spotify Logo">
+    <div class="hero-header">
+        <img src="data:image/png;base64,{img_base64}" class="hero-logo" alt="Spotify Logo">
         <div>
-            <div style="font-size: 76px; font-weight: 900; color: #FFFFFF; letter-spacing: -3px; line-height: 1; margin-bottom: 4px;">Overview</div>
-            <div style="font-size: 22px; color: #B3B3B3; font-weight: 400; margin-top: 4px; letter-spacing: -0.3px;">Spotify Dataset Intelligence</div>
+            <div class="hero-title">Overview</div>
+            <div class="hero-subtitle">Spotify Dataset Intelligence</div>
         </div>
     </div>
     """, unsafe_allow_html=True)
 
 else:
     st.markdown("""
-    <div style="display: flex; align-items: center; gap: 22px; padding: 20px 0 10px 0;">
-        <div style="background:#1DB954; width:120px; height:120px; border-radius:20px; display:flex; align-items:center; justify-content:center; font-size:56px; font-weight:900; color:#000; flex-shrink:0;">
+    <div class="hero-header">
+        <div style="
+            background:#1DB954;
+            width:120px;
+            height:120px;
+            border-radius:20px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:56px;
+            font-weight:900;
+            color:#000;
+            flex-shrink:0;
+        ">
             S
         </div>
         <div>
-            <div style="font-size: 76px; font-weight: 900; color: #FFFFFF; letter-spacing: -3px; line-height: 1; margin-bottom: 4px;">Overview</div>
-            <div style="font-size: 22px; color: #B3B3B3; font-weight: 400; margin-top: 4px; letter-spacing: -0.3px;">Spotify Dataset Intelligence</div>
+            <div class="hero-title">Overview</div>
+            <div class="hero-subtitle">Spotify Dataset Intelligence</div>
         </div>
     </div>
     """, unsafe_allow_html=True)
 
+st.markdown("</div>", unsafe_allow_html=True)
+st.markdown("<div style='height:4px'></div>", unsafe_allow_html=True)
+
 # -----------------------------
-# Quick Stats Row
+# Quick Stats Row (Compact Stats)
 # -----------------------------
 
 col_stats1, col_stats2, col_stats3, col_stats4 = st.columns(4)
@@ -159,21 +176,23 @@ with col_stats4:
     </div>
     """, unsafe_allow_html=True)
 
+st.markdown("<div style='height: 16px;'></div>", unsafe_allow_html=True)
+
 # -----------------------------
-# Mini Charts Row
+# Mini Charts Row (with Cards)
 # -----------------------------
 
 mini_left, mini_right = st.columns(2)
 
 with mini_left:
-    st.markdown('<div class="table-card" style="padding: 16px 20px 12px 20px;">', unsafe_allow_html=True)
-    st.markdown('<div style="color:#FFFFFF; font-size:16px; font-weight:600; margin-bottom:8px;">Popularity Distribution</div>', unsafe_allow_html=True)
+    st.markdown('<div class="table-card">', unsafe_allow_html=True)
     
     pop_fig = px.histogram(
         songs,
         x="popularity",
         nbins=20,
         color_discrete_sequence=["#1DB954"],
+        title="Popularity Distribution"
     )
     
     pop_fig.update_layout(
@@ -182,19 +201,11 @@ with mini_left:
         plot_bgcolor="rgba(0,0,0,0)",
         font=dict(color="#B3B3B3", size=12),
         showlegend=False,
-        margin=dict(l=10, r=10, t=0, b=10),
+        margin=dict(l=10, r=10, t=40, b=10),
         height=280,
-        xaxis=dict(
-            gridcolor="#282828", 
-            zeroline=False, 
-            title_font=dict(color="#B3B3B3")
-        ),
-        yaxis=dict(
-            gridcolor="#282828", 
-            zeroline=False, 
-            title_font=dict(color="#B3B3B3")
-        ),
-        title=None
+        xaxis=dict(gridcolor="#282828", zeroline=False, title_font=dict(color="#B3B3B3")),
+        yaxis=dict(gridcolor="#282828", zeroline=False, title_font=dict(color="#B3B3B3")),
+        title_font=dict(color="#FFFFFF", size=14)
     )
     
     pop_fig.update_traces(marker=dict(line=dict(width=0)))
@@ -203,8 +214,7 @@ with mini_left:
     st.markdown('</div>', unsafe_allow_html=True)
 
 with mini_right:
-    st.markdown('<div class="table-card" style="padding: 16px 20px 12px 20px;">', unsafe_allow_html=True)
-    st.markdown('<div style="color:#FFFFFF; font-size:16px; font-weight:600; margin-bottom:8px;">Top Genres</div>', unsafe_allow_html=True)
+    st.markdown('<div class="table-card">', unsafe_allow_html=True)
     
     # Get top genres
     top_genres = genres.sort_values("popularity", ascending=False).head(10)
@@ -217,6 +227,7 @@ with mini_right:
         color="popularity",
         color_continuous_scale=["#169C46", "#1DB954", "#1ED760"],
         text_auto='.0f',
+        title="Top Genres"
     )
     
     genre_fig.update_layout(
@@ -225,19 +236,11 @@ with mini_right:
         plot_bgcolor="rgba(0,0,0,0)",
         font=dict(color="#B3B3B3", size=12),
         showlegend=False,
-        margin=dict(l=10, r=10, t=0, b=10),
+        margin=dict(l=10, r=10, t=40, b=10),
         height=280,
-        xaxis=dict(
-            gridcolor="#282828", 
-            zeroline=False, 
-            title_font=dict(color="#B3B3B3")
-        ),
-        yaxis=dict(
-            gridcolor="#282828", 
-            zeroline=False, 
-            title_font=dict(color="#B3B3B3")
-        ),
-        title=None
+        xaxis=dict(gridcolor="#282828", zeroline=False, title_font=dict(color="#B3B3B3")),
+        yaxis=dict(gridcolor="#282828", zeroline=False, title_font=dict(color="#B3B3B3")),
+        title_font=dict(color="#FFFFFF", size=14)
     )
     
     genre_fig.update_traces(
@@ -248,12 +251,13 @@ with mini_right:
     st.plotly_chart(genre_fig, use_container_width=True, config={"displayModeBar": False})
     st.markdown('</div>', unsafe_allow_html=True)
 
+st.markdown("<div style='height: 16px;'></div>", unsafe_allow_html=True)
+
 # -----------------------------
-# Dataset Preview
+# Dataset Preview (with Card)
 # -----------------------------
 
-st.markdown('<div class="table-card" style="padding: 16px 20px 12px 20px;">', unsafe_allow_html=True)
-st.markdown('<div style="color:#FFFFFF; font-size:16px; font-weight:600; margin-bottom:8px;">Dataset Preview</div>', unsafe_allow_html=True)
+st.markdown('<div class="table-card">', unsafe_allow_html=True)
 
 # Display dataframe with progress bars for popularity
 st.dataframe(
