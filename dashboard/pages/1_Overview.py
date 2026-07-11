@@ -87,7 +87,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # -----------------------------
-# Hero Header (same as Home page)
+# Hero Header
 # -----------------------------
 
 logo_path = Path(__file__).parent.parent / "assets" / "spotify_logo.png"
@@ -119,10 +119,8 @@ else:
     </div>
     """, unsafe_allow_html=True)
 
-st.markdown("<div style='height:4px'></div>", unsafe_allow_html=True)
-
 # -----------------------------
-# Quick Stats Row (Compact Stats)
+# Quick Stats Row
 # -----------------------------
 
 col_stats1, col_stats2, col_stats3, col_stats4 = st.columns(4)
@@ -161,10 +159,8 @@ with col_stats4:
     </div>
     """, unsafe_allow_html=True)
 
-st.markdown("<div style='height: 16px;'></div>", unsafe_allow_html=True)
-
 # -----------------------------
-# Mini Charts Row (with Cards)
+# Mini Charts Row
 # -----------------------------
 
 mini_left, mini_right = st.columns(2)
@@ -252,10 +248,8 @@ with mini_right:
     st.plotly_chart(genre_fig, use_container_width=True, config={"displayModeBar": False})
     st.markdown('</div>', unsafe_allow_html=True)
 
-st.markdown("<div style='height: 16px;'></div>", unsafe_allow_html=True)
-
 # -----------------------------
-# Dataset Preview (with Card)
+# Dataset Preview
 # -----------------------------
 
 st.markdown('<div class="table-card" style="padding: 16px 20px 12px 20px;">', unsafe_allow_html=True)
