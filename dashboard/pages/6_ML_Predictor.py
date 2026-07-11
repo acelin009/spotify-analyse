@@ -524,20 +524,24 @@ with left:
     # Row 2: Key and Mode
     col_feat3, col_feat4 = st.columns(2)
     with col_feat3:
+        # Fix: Ensure key_index is an integer
+        key_index = int(st.session_state.slider_values.get("key", 0))
         key = st.selectbox(
             "Key",
             options=list(range(12)),
-            index=st.session_state.slider_values["key"],
+            index=key_index,
             format_func=lambda x: ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"][x],
             help="Musical key of the track (0-11)"
         )
         st.session_state.slider_values["key"] = key
     
     with col_feat4:
+        # Fix: Ensure mode_index is an integer
+        mode_index = int(st.session_state.slider_values.get("mode", 0))
         mode = st.selectbox(
             "Mode",
             options=[0, 1],
-            index=st.session_state.slider_values["mode"],
+            index=mode_index,
             format_func=lambda x: "Minor" if x == 0 else "Major",
             help="Musical mode (0=Minor, 1=Major)"
         )
@@ -642,10 +646,12 @@ with left:
         st.session_state.slider_values["duration_ms"] = duration_ms
     
     with col_feat14:
+        # Fix: Ensure explicit_index is an integer
+        explicit_index = int(st.session_state.slider_values.get("explicit", 0))
         explicit = st.selectbox(
             "Explicit Content",
             [0, 1],
-            index=st.session_state.slider_values["explicit"],
+            index=explicit_index,
             format_func=lambda x: "No" if x == 0 else "Yes",
             help="Whether the track has explicit lyrics"
         )
