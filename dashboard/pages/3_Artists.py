@@ -692,7 +692,7 @@ median_popularity = artists_clean['popularity'].median()
 
 # Check if we have data to plot
 if len(artists_clean) > 0:
-    # Create quadrant scatter plot with brighter colors
+    # Create quadrant scatter plot with green shades and white
     fig_quadrant = px.scatter(
         artists_clean,
         x="danceability",
@@ -708,7 +708,7 @@ if len(artists_clean) > 0:
             "valence": True
         },
         size_max=50,
-        color_continuous_scale=["#FF6B6B", "#FFD93D", "#6BCB77", "#4D96FF", "#9B59B6"],
+        color_continuous_scale=["#FFFFFF", "#90EE90", "#32CD32", "#228B22", "#006400"],
         labels={
             "danceability": "Danceability Score",
             "popularity": "Average Popularity",
@@ -718,93 +718,111 @@ if len(artists_clean) > 0:
         title="Artist Quadrant: Danceability vs Popularity"
     )
 
-    # Add quadrant lines with brighter colors
+    # Add quadrant lines with white color for better visibility
     fig_quadrant.add_hline(
         y=median_popularity,
         line_dash="dash",
-        line_color="#FFD700",
-        opacity=0.6,
+        line_color="#FFFFFF",
+        opacity=0.7,
         annotation_text=f"Median Popularity: {median_popularity:.1f}",
-        annotation_font=dict(color="#FFD700", size=11)
+        annotation_font=dict(color="#FFFFFF", size=12)
     )
 
     fig_quadrant.add_vline(
         x=median_danceability,
         line_dash="dash",
-        line_color="#FFD700",
-        opacity=0.6,
+        line_color="#FFFFFF",
+        opacity=0.7,
         annotation_text=f"Median Danceability: {median_danceability:.2f}",
-        annotation_font=dict(color="#FFD700", size=11)
+        annotation_font=dict(color="#FFFFFF", size=12)
     )
 
-    # Add quadrant labels with brighter colors
+    # Add quadrant labels with bright green
     fig_quadrant.add_annotation(
         x=0.85,
         y=88,
         text="⭐ Hit Makers",
-        font=dict(color="#1DB954", size=16, weight="bold"),
+        font=dict(color="#1DB954", size=18, weight="bold"),
         showarrow=False,
-        opacity=0.9
+        opacity=0.95,
+        bgcolor="rgba(0,0,0,0.6)",
+        bordercolor="#1DB954",
+        borderwidth=2,
+        borderpad=4
     )
 
     fig_quadrant.add_annotation(
         x=0.85,
         y=12,
         text="🕺 Dance Icons",
-        font=dict(color="#1DB954", size=16, weight="bold"),
+        font=dict(color="#1DB954", size=18, weight="bold"),
         showarrow=False,
-        opacity=0.9
+        opacity=0.95,
+        bgcolor="rgba(0,0,0,0.6)",
+        bordercolor="#1DB954",
+        borderwidth=2,
+        borderpad=4
     )
 
     fig_quadrant.add_annotation(
         x=0.15,
         y=88,
         text="🎨 Niche Artists",
-        font=dict(color="#1DB954", size=16, weight="bold"),
+        font=dict(color="#1DB954", size=18, weight="bold"),
         showarrow=False,
-        opacity=0.9
+        opacity=0.95,
+        bgcolor="rgba(0,0,0,0.6)",
+        bordercolor="#1DB954",
+        borderwidth=2,
+        borderpad=4
     )
 
     fig_quadrant.add_annotation(
         x=0.15,
         y=12,
         text="🔬 Experimental",
-        font=dict(color="#1DB954", size=16, weight="bold"),
+        font=dict(color="#1DB954", size=18, weight="bold"),
         showarrow=False,
-        opacity=0.9
+        opacity=0.95,
+        bgcolor="rgba(0,0,0,0.6)",
+        bordercolor="#1DB954",
+        borderwidth=2,
+        borderpad=4
     )
 
     fig_quadrant.update_layout(
         template="plotly_dark",
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(color="#FFFFFF", family="Inter, sans-serif", size=12),
+        font=dict(color="#FFFFFF", family="Inter, sans-serif", size=13),
         margin=dict(l=10, r=10, t=40, b=10),
         height=550,
         xaxis=dict(
-            gridcolor="#444444", 
+            gridcolor="#555555", 
             zeroline=False,
             range=[0, 1.05],
-            title_font=dict(color="#FFFFFF", size=14),
-            tickfont=dict(color="#FFFFFF")
+            title_font=dict(color="#FFFFFF", size=15, weight="bold"),
+            tickfont=dict(color="#FFFFFF", size=12)
         ),
         yaxis=dict(
-            gridcolor="#444444", 
+            gridcolor="#555555", 
             zeroline=False,
             range=[0, 105],
-            title_font=dict(color="#FFFFFF", size=14),
-            tickfont=dict(color="#FFFFFF")
+            title_font=dict(color="#FFFFFF", size=15, weight="bold"),
+            tickfont=dict(color="#FFFFFF", size=12)
         ),
-        title_font=dict(color="#FFFFFF", size=18),
+        title_font=dict(color="#FFFFFF", size=20, weight="bold"),
         legend=dict(
-            font=dict(color="#FFFFFF"),
-            bgcolor="rgba(0,0,0,0.7)",
-            bordercolor="#444444",
-            borderwidth=1
+            font=dict(color="#FFFFFF", size=12),
+            bgcolor="rgba(0,0,0,0.8)",
+            bordercolor="#1DB954",
+            borderwidth=2,
+            borderpad=6
         ),
         coloraxis_colorbar=dict(
-            title=dict(text="Energy", font=dict(color="#FFFFFF")),
-            tickfont=dict(color="#FFFFFF")
+            title=dict(text="Energy", font=dict(color="#FFFFFF", size=13)),
+            tickfont=dict(color="#FFFFFF", size=11),
+            tickcolor="#FFFFFF"
         )
     )
 
@@ -814,21 +832,21 @@ else:
 
 st.markdown('</div>', unsafe_allow_html=True)
 
-# Add quadrant explanation
+# Add quadrant explanation with green theme
 st.markdown("""
-<div style="background: rgba(30, 27, 22, 0.92); border-radius: 12px; padding: 16px 20px; margin-top: 8px; border: 1px solid rgba(255, 255, 255, 0.04);">
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; color: #B3B3B3; font-size: 14px;">
+<div style="background: rgba(30, 27, 22, 0.92); border-radius: 12px; padding: 16px 20px; margin-top: 8px; border: 1px solid rgba(255, 255, 255, 0.08);">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; color: #E0E0E0; font-size: 14px;">
         <div>
-            <span style="color: #1DB954; font-weight: 600;">Hit Makers</span> — High popularity, high danceability<br>
-            <span style="color: #1DB954; font-weight: 600;">Niche Artists</span> — High popularity, low danceability
+            <span style="color: #1DB954; font-weight: 700; font-size: 15px;">⭐ Hit Makers</span> — High popularity, high danceability<br>
+            <span style="color: #1DB954; font-weight: 700; font-size: 15px;">🎨 Niche Artists</span> — High popularity, low danceability
         </div>
         <div>
-            <span style="color: #1DB954; font-weight: 600;">Dance Icons</span> — Low popularity, high danceability<br>
-            <span style="color: #1DB954; font-weight: 600;">Experimental</span> — Low popularity, low danceability
+            <span style="color: #1DB954; font-weight: 700; font-size: 15px;">🕺 Dance Icons</span> — Low popularity, high danceability<br>
+            <span style="color: #1DB954; font-weight: 700; font-size: 15px;">🔬 Experimental</span> — Low popularity, low danceability
         </div>
     </div>
-    <div style="color: #888888; font-size: 12px; margin-top: 10px; text-align: center;">
-        Bubble size = Number of Songs  •  Color = Energy Level (Red → Purple)
+    <div style="color: #AAAAAA; font-size: 12px; margin-top: 10px; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;">
+        💡 <strong>Bubble size</strong> = Number of Songs &nbsp;•&nbsp; <strong>Color</strong> = Energy Level (White → Dark Green)
     </div>
 </div>
 """, unsafe_allow_html=True)
