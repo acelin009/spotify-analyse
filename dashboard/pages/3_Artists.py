@@ -737,12 +737,12 @@ if len(artists_clean) > 0:
         annotation_font=dict(color="#FFFFFF", size=12)
     )
 
-    # Add quadrant labels with bright green
+    # Add quadrant labels with bright green - fixed font parameters
     fig_quadrant.add_annotation(
         x=0.85,
         y=88,
         text="⭐ Hit Makers",
-        font=dict(color="#1DB954", size=18, weight="bold"),
+        font=dict(color="#1DB954", size=18),
         showarrow=False,
         opacity=0.95,
         bgcolor="rgba(0,0,0,0.6)",
@@ -755,7 +755,7 @@ if len(artists_clean) > 0:
         x=0.85,
         y=12,
         text="🕺 Dance Icons",
-        font=dict(color="#1DB954", size=18, weight="bold"),
+        font=dict(color="#1DB954", size=18),
         showarrow=False,
         opacity=0.95,
         bgcolor="rgba(0,0,0,0.6)",
@@ -768,7 +768,7 @@ if len(artists_clean) > 0:
         x=0.15,
         y=88,
         text="🎨 Niche Artists",
-        font=dict(color="#1DB954", size=18, weight="bold"),
+        font=dict(color="#1DB954", size=18),
         showarrow=False,
         opacity=0.95,
         bgcolor="rgba(0,0,0,0.6)",
@@ -781,7 +781,7 @@ if len(artists_clean) > 0:
         x=0.15,
         y=12,
         text="🔬 Experimental",
-        font=dict(color="#1DB954", size=18, weight="bold"),
+        font=dict(color="#1DB954", size=18),
         showarrow=False,
         opacity=0.95,
         bgcolor="rgba(0,0,0,0.6)",
@@ -801,17 +801,17 @@ if len(artists_clean) > 0:
             gridcolor="#555555", 
             zeroline=False,
             range=[0, 1.05],
-            title_font=dict(color="#FFFFFF", size=15, weight="bold"),
+            title_font=dict(color="#FFFFFF", size=15),
             tickfont=dict(color="#FFFFFF", size=12)
         ),
         yaxis=dict(
             gridcolor="#555555", 
             zeroline=False,
             range=[0, 105],
-            title_font=dict(color="#FFFFFF", size=15, weight="bold"),
+            title_font=dict(color="#FFFFFF", size=15),
             tickfont=dict(color="#FFFFFF", size=12)
         ),
-        title_font=dict(color="#FFFFFF", size=20, weight="bold"),
+        title_font=dict(color="#FFFFFF", size=20),
         legend=dict(
             font=dict(color="#FFFFFF", size=12),
             bgcolor="rgba(0,0,0,0.8)",
@@ -821,8 +821,7 @@ if len(artists_clean) > 0:
         ),
         coloraxis_colorbar=dict(
             title=dict(text="Energy", font=dict(color="#FFFFFF", size=13)),
-            tickfont=dict(color="#FFFFFF", size=11),
-            tickcolor="#FFFFFF"
+            tickfont=dict(color="#FFFFFF", size=11)
         )
     )
 
