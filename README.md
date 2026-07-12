@@ -7,7 +7,7 @@
 ![Scikit-learn](https://img.shields.io/badge/Scikit--learn-1.3.0-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)
 
-**[🌐 Live Demo](https://your-streamlit-link.streamlit.app)**
+**[🌐 Live Demo](https://spotify-analyse.streamlit.app/)**
 
 ![Dashboard Demo](images/app.png)
 
