@@ -1,4 +1,3 @@
-﻿# spotify-analyse
 # 🎵 Spotify Music Intelligence
 
 **End-to-End Machine Learning Analytics Platform for Spotify Music Data**
@@ -10,11 +9,13 @@
 
 **[🌐 Live Demo](https://your-streamlit-link.streamlit.app)**
 
+![Dashboard Demo](images/app.png)
+
 ---
 
 ## Overview
 
-Spotify Music Intelligence is an end-to-end data science platform that turns raw Spotify track data into actionable insights. It combines exploratory data analysis, predictive modeling, explainable AI, and an interactive Streamlit dashboard, with production practices like modular code, CI/CD, and cloud deployment.
+Spotify Music Intelligence is an end-to-end data science platform that turns raw Spotify track data into actionable insights. It combines exploratory data analysis, predictive modeling, explainable AI, and an interactive Streamlit dashboard, built with production practices like modular code, CI/CD, and cloud deployment.
 
 **Use cases:**
 - Discover audio characteristics and patterns in modern music
@@ -22,18 +23,18 @@ Spotify Music Intelligence is an end-to-end data science platform that turns raw
 - Predict song popularity before release
 - Understand which features drive commercial success
 
-## Features
+## Highlights
 
-- **Data Exploration** — interactive visualizations, correlations, temporal trends
-- **Artist Analytics** — top artists, feature profiles, year-over-year performance
-- **Genre Intelligence** — genre distribution, comparisons, and evolution
-- **Trend Analysis** — audio feature evolution from the 1960s to present
-- **Popularity Predictor** — real-time ML-based popularity prediction
-- **Explainable AI** — SHAP-based feature importance and prediction explanations
+- ✅ End-to-end ML pipeline, from raw data to deployment
+- ✅ Hyperparameter-tuned Random Forest model
+- ✅ SHAP explainability for transparent predictions
+- ✅ 6-page interactive Streamlit dashboard
+- ✅ Automated testing + GitHub Actions CI/CD
+- ✅ Live cloud deployment
 
 ## Dataset
 
-**114,000+ tracks** from Spotify with audio features and metadata.
+**170,000+ tracks**, **34,000+ artists** from Spotify, with audio features and metadata.
 
 | Feature | Description |
 |---|---|
@@ -45,14 +46,19 @@ Spotify Music Intelligence is an end-to-end data science platform that turns raw
 | `tempo` | Beats per minute |
 | `duration_ms`, `genre`, `year` | Track length, genre, release year |
 
-Source: [Kaggle – Spotify Tracks Dataset](https://www.kaggle.com/datasets/maharshipandya/spotify-tracks-dataset)
+Source: [Kaggle – Spotify Tracks Dataset](https://www.kaggle.com/code/vatsalmavani/music-recommendation-system-using-spotify-dataset)
 
-## Pipeline
+## Dashboard Pages
 
-```
-Raw Data → Cleaning → EDA → Feature Engineering → Model Training
-   → Hyperparameter Tuning → SHAP Analysis → Streamlit Dashboard → Deployment
-```
+| Page | Purpose |
+|---|---|
+| 🏠 Home | Dataset KPIs and navigation |
+| 📊 Overview | Popularity distribution, correlation heatmap, feature stats |
+| 🎵 Song Explorer | Search tracks, radar chart of features, similar songs |
+| 🎤 Artist Analytics | Career trajectory, feature profiles, related artists |
+| 🎵 Genre Analytics | Genre comparison, distribution, evolution over time |
+| 📈 Trends | Feature evolution from the 1960s to present |
+| 🤖 Popularity Predictor | Real-time prediction with SHAP explanation |
 
 ## Machine Learning
 
@@ -65,20 +71,36 @@ Models evaluated: Linear Regression, Decision Tree, Random Forest, XGBoost.
 | **Random Forest** | **11.94** | **16.21** | **0.56** |
 | XGBoost | 12.28 | 16.58 | 0.54 |
 
-**Random Forest** was selected as the final model — best accuracy, robust to non-linearity, and interpretable via feature importance.
+**Random Forest** was selected — best accuracy, robust to non-linearity, and interpretable via feature importance. Hyperparameter tuning via grid search improved MAE by 8%.
 
-Model transparency is provided through **SHAP**, showing global feature importance and per-prediction explanations. Danceability shows the strongest positive impact on popularity; instrumentalness is negatively correlated.
+```python
+best_params = {
+    'n_estimators': 100,
+    'max_depth': 12,
+    'min_samples_split': 5,
+    'min_samples_leaf': 2
+}
+```
 
-## Dashboard Pages
+### Explainable AI
 
-| Page | Purpose |
-|---|---|
-| 🏠 Overview | Dataset snapshot and key metrics |
-| 🎵 Song Explorer | Search tracks and view feature breakdowns |
-| 🎤 Artist Analytics | Artist performance and career trends |
-| 🎵 Genre Analytics | Compare genres across features and time |
-| 📈 Trends | Decade-based audio feature evolution |
-| 🤖 Popularity Predictor | Real-time prediction with SHAP explanation |
+Model transparency is provided through **SHAP**, showing global feature importance and per-prediction explanations.
+
+**Top features driving popularity:**
+1. Danceability — 23.4%
+2. Energy — 18.7%
+3. Valence — 15.2%
+4. Loudness — 12.8%
+5. Acousticness — 10.3%
+
+Danceability shows the strongest positive impact on popularity; instrumentalness is negatively correlated, and feature effects are often non-linear.
+
+## Pipeline
+
+```
+Raw Data → Cleaning → EDA → Feature Engineering → Model Training
+   → Hyperparameter Tuning → SHAP Analysis → Streamlit Dashboard → Deployment
+```
 
 ## Project Structure
 
@@ -92,14 +114,15 @@ spotify-music-intelligence/
 ├── src/                          # data, features, models, utils modules
 ├── tests/                        # unit tests
 ├── requirements.txt
+├── Dockerfile
 └── README.md
 ```
 
 ## Installation
 
 ```bash
-git clone https://github.com/yourusername/spotify-music-intelligence.git
-cd spotify-music-intelligence
+git clone https://github.com/acelnaz/spotify-analyse.git
+cd spotify-analyse
 
 python -m venv venv
 source venv/bin/activate      # Windows: venv\Scripts\activate
@@ -130,9 +153,11 @@ pytest tests/ --cov=src
 | RMSE | 16.21 |
 | MAPE | 15.8% |
 
+5-fold cross-validation mean: **R² = 0.56, MAE = 11.91**
+
 ## CI/CD
 
-GitHub Actions runs tests and linting on every push/PR, and deploys to Streamlit Cloud on merges to `main`.
+GitHub Actions runs tests, linting, and model validation on every push/PR, and deploys to Streamlit Cloud on merges to `main`.
 
 ## Tech Stack
 
@@ -143,7 +168,12 @@ GitHub Actions runs tests and linting on every push/PR, and deploys to Streamlit
 
 ## Deployment
 
-Deployed via [Streamlit Cloud](https://share.streamlit.io) from the `dashboard/app.py` entry point. A `Dockerfile` is also included for containerized deployment.
+Deployed via [Streamlit Cloud](https://share.streamlit.io) from the `dashboard/app.py` entry point.
+
+```bash
+docker build -t spotify-music-intelligence .
+docker run -p 8501:8501 spotify-music-intelligence
+```
 
 ## Roadmap
 
@@ -151,6 +181,7 @@ Deployed via [Streamlit Cloud](https://share.streamlit.io) from the `dashboard/a
 - Recommendation engine for similar songs
 - Deep learning models for improved prediction
 - REST API for programmatic access
+- Mobile companion app
 
 ## License
 
@@ -158,8 +189,9 @@ Licensed under the [MIT License](LICENSE).
 
 ## Author
 
-**Acelin Nazareth**
-[GitHub](https://github.com/yourusername) · [LinkedIn](https://linkedin.com/in/yourusername) · [Email](mailto:your.email@domain.com)
+**Acelin Nazareth** — Data Scientist & Machine Learning Engineer
+
+[GitHub](https://github.com/acelin009) · [LinkedIn](https://linkedin.com/in/acelin.nazareth) · [Email](mailto:acelin.nazareth@email.com)
 
 ---
 
