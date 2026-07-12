@@ -15,7 +15,7 @@
 
 ## Overview
 
-Spotify Music Intelligence is an end-to-end data science platform that turns raw Spotify track data into actionable insights. It combines exploratory data analysis, predictive modeling, explainable AI, and an interactive Streamlit dashboard, built with production practices like modular code, CI/CD, and cloud deployment.
+Spotify Music Intelligence is an end-to-end data science platform that turns raw Spotify track data into actionable insights. It combines exploratory data analysis, predictive modeling, explainable AI, and an interactive Streamlit dashboard.
 
 **Use cases:**
 - Discover audio characteristics and patterns in modern music
@@ -26,11 +26,21 @@ Spotify Music Intelligence is an end-to-end data science platform that turns raw
 ## Highlights
 
 - ✅ End-to-end ML pipeline, from raw data to deployment
-- ✅ Hyperparameter-tuned Random Forest model
+- ✅ Hyperparameter-tuned Random Forest model (R² = 0.809)
 - ✅ SHAP explainability for transparent predictions
-- ✅ 6-page interactive Streamlit dashboard
-- ✅ Automated testing + GitHub Actions CI/CD
+- ✅ 7-page interactive Streamlit dashboard
+- ✅ Automated testing via GitHub Actions
 - ✅ Live cloud deployment
+
+## 📊 Project at a Glance
+
+| Metric | Value |
+|---|---:|
+| Songs | 170,000+ |
+| Artists | 34,000+ |
+| Dashboard Pages | 7 |
+| ML Models Compared | 3 |
+| Best R² Score | 0.809 |
 
 ## Dataset
 
@@ -46,7 +56,7 @@ Spotify Music Intelligence is an end-to-end data science platform that turns raw
 | `tempo` | Beats per minute |
 | `duration_ms`, `genre`, `year` | Track length, genre, release year |
 
-Source: [Kaggle – Spotify Tracks Dataset](https://www.kaggle.com/code/vatsalmavani/music-recommendation-system-using-spotify-dataset)
+Source: [Kaggle – Spotify Tracks Dataset](https://www.kaggle.com/datasets/maharshipandya/spotify-tracks-dataset)
 
 ## Dashboard Pages
 
@@ -62,51 +72,59 @@ Source: [Kaggle – Spotify Tracks Dataset](https://www.kaggle.com/code/vatsalma
 
 ## Machine Learning
 
-Models evaluated: Linear Regression, Decision Tree, Random Forest, XGBoost.
+Models evaluated:
+
+- Linear Regression
+- Decision Tree Regressor
+- Random Forest Regressor
 
 | Model | MAE | RMSE | R² |
 |---|---|---|---|
-| Linear Regression | 16.74 | 21.36 | 0.24 |
-| Decision Tree | 13.21 | 17.89 | 0.47 |
-| **Random Forest** | **11.94** | **16.21** | **0.56** |
-| XGBoost | 12.28 | 16.58 | 0.54 |
+| Linear Regression | 7.98 | 10.73 | 0.759 |
+| Decision Tree | 9.22 | 13.67 | 0.609 |
+| **Random Forest** | **6.75** | **9.55** | **0.809** |
 
-**Random Forest** was selected — best accuracy, robust to non-linearity, and interpretable via feature importance. Hyperparameter tuning via grid search improved MAE by 8%.
-
-```python
-best_params = {
-    'n_estimators': 100,
-    'max_depth': 12,
-    'min_samples_split': 5,
-    'min_samples_leaf': 2
-}
-```
+**Random Forest** was selected as the final model — best accuracy across all metrics, robust to non-linearity, and interpretable via feature importance. Hyperparameter tuning was performed using `GridSearchCV` to optimize the Random Forest model.
 
 ### Explainable AI
 
-Model transparency is provided through **SHAP**, showing global feature importance and per-prediction explanations.
-
-**Top features driving popularity:**
-1. Danceability — 23.4%
-2. Energy — 18.7%
-3. Valence — 15.2%
-4. Loudness — 12.8%
-5. Acousticness — 10.3%
-
-Danceability shows the strongest positive impact on popularity; instrumentalness is negatively correlated, and feature effects are often non-linear.
+The Random Forest feature importance analysis identified danceability, energy, loudness, valence, and acousticness as some of the most influential features used to predict song popularity. SHAP analysis was used to further explain both global feature importance and individual predictions.
 
 ## Pipeline
 
 ```
-Raw Data → Cleaning → EDA → Feature Engineering → Model Training
-   → Hyperparameter Tuning → SHAP Analysis → Streamlit Dashboard → Deployment
+Spotify Dataset
+      │
+      ▼
+Data Cleaning
+      │
+      ▼
+Exploratory Data Analysis
+      │
+      ▼
+Feature Engineering
+      │
+      ▼
+Machine Learning
+      │
+      ▼
+Hyperparameter Tuning
+      │
+      ▼
+Explainable AI (SHAP)
+      │
+      ▼
+Streamlit Dashboard
+      │
+      ▼
+Live Deployment
 ```
 
 ## Project Structure
 
 ```
-spotify-music-intelligence/
-├── .github/workflows/ci_cd.yml   # CI/CD pipeline
+spotify-analyse/
+├── .github/workflows/ci.yml      # CI pipeline (tests + linting)
 ├── dashboard/                    # Streamlit app (app.py, pages/, components/)
 ├── data/                         # raw / processed / external datasets
 ├── models/                       # trained model, scaler, metadata
@@ -114,14 +132,13 @@ spotify-music-intelligence/
 ├── src/                          # data, features, models, utils modules
 ├── tests/                        # unit tests
 ├── requirements.txt
-├── Dockerfile
 └── README.md
 ```
 
 ## Installation
 
 ```bash
-git clone https://github.com/acelnaz/spotify-analyse.git
+git clone https://github.com/acelin009/spotify-analyse.git
 cd spotify-analyse
 
 python -m venv venv
@@ -148,32 +165,24 @@ pytest tests/ --cov=src
 
 | Metric | Value |
 |---|---|
-| R² Score | 0.56 |
-| MAE | 11.94 |
-| RMSE | 16.21 |
-| MAPE | 15.8% |
-
-5-fold cross-validation mean: **R² = 0.56, MAE = 11.91**
+| R² Score | 0.809 |
+| MAE | 6.75 |
+| RMSE | 9.55 |
 
 ## CI/CD
 
-GitHub Actions runs tests, linting, and model validation on every push/PR, and deploys to Streamlit Cloud on merges to `main`.
+GitHub Actions automatically validates the project by installing dependencies and running the automated test suite on every push and pull request.
 
 ## Tech Stack
 
-**Data & ML:** Pandas, NumPy, Scikit-learn, XGBoost, SHAP
+**Data & ML:** Pandas, NumPy, Scikit-learn, SHAP
 **Visualization:** Plotly, Matplotlib, Seaborn
 **Dashboard:** Streamlit
-**DevOps:** GitHub Actions, Docker, Pytest, Flake8
+**DevOps:** GitHub Actions, Pytest, Flake8
 
 ## Deployment
 
 Deployed via [Streamlit Cloud](https://share.streamlit.io) from the `dashboard/app.py` entry point.
-
-```bash
-docker build -t spotify-music-intelligence .
-docker run -p 8501:8501 spotify-music-intelligence
-```
 
 ## Roadmap
 
@@ -189,7 +198,7 @@ Licensed under the [MIT License](LICENSE).
 
 ## Author
 
-**Acelin Nazareth** — Data Scientist & Machine Learning Engineer
+**Acelin Nazareth** — Data Science Student
 
 [GitHub](https://github.com/acelin009) · [LinkedIn](https://linkedin.com/in/acelin.nazareth) · [Email](mailto:acelin.nazareth@email.com)
 
