@@ -15,7 +15,7 @@
 
 ## Overview
 
-Spotify Music Intelligence is an end-to-end data science platform that turns raw Spotify track data into actionable insights. It combines exploratory data analysis, predictive modeling, explainable AI, and an interactive Streamlit dashboard.
+**Spotify Music Intelligence** is an end-to-end data science and machine learning platform built to analyze over **170,000 Spotify songs** using exploratory data analysis, predictive modeling, and interactive dashboards. The project demonstrates the complete lifecycle of a production-inspired ML solution — from raw data exploration and feature engineering to deployment on Streamlit Cloud.
 
 **Use cases:**
 - Discover audio characteristics and patterns in modern music
@@ -27,7 +27,7 @@ Spotify Music Intelligence is an end-to-end data science platform that turns raw
 
 - ✅ End-to-end ML pipeline, from raw data to deployment
 - ✅ Hyperparameter-tuned Random Forest model (R² = 0.809)
-- ✅ SHAP explainability for transparent predictions
+- ✅ Feature importance analysis for model transparency
 - ✅ 7-page interactive Streamlit dashboard
 - ✅ Automated testing via GitHub Actions
 - ✅ Live cloud deployment
@@ -36,39 +36,148 @@ Spotify Music Intelligence is an end-to-end data science platform that turns raw
 
 | Metric | Value |
 |---|---:|
-| Songs | 170,000+ |
-| Artists | 34,000+ |
-| Dashboard Pages | 7 |
-| ML Models Compared | 3 |
-| Best R² Score | 0.809 |
+| Songs Analyzed | **170,653** |
+| Artists | **34,088** |
+| Genres | **2,973** |
+| Audio Features Used for ML | **14** |
+| Dashboard Pages | **7** |
+| ML Models Compared | **3** |
+| Best Model | **Random Forest Regressor** |
+| Best R² Score | **0.809** |
 
 ## Dataset
 
-**170,000+ tracks**, **34,000+ artists** from Spotify, with audio features and metadata.
+The project is built using Spotify datasets containing **170,653 songs**, **34,088 artists**, **2,973 genres**, and yearly aggregated statistics.
+
+The primary dataset contains **19 columns** describing each track's metadata and audio characteristics, used for exploratory analysis and machine learning.
+
+### 📂 Datasets Used
+
+| Dataset | Purpose |
+|---|---|
+| `data.csv` | Main song-level dataset used for EDA and machine learning |
+| `data_by_artist.csv` | Artist-level aggregated statistics |
+| `data_by_genres.csv` | Genre-level aggregated audio features |
+| `data_by_year.csv` | Year-wise music trends |
+| `data_w_genres.csv` | Songs enriched with genre information |
+
+### Main Dataset Features
 
 | Feature | Description |
 |---|---|
-| `track_name`, `artist_name`, `track_id` | Track metadata |
-| `popularity` | Score 0–100 (target variable) |
-| `danceability`, `energy`, `valence` | Core audio characteristics (0–1) |
+| `name` | Song title |
+| `artists` | Artist(s) performing the song |
+| `release_date` | Song release date |
+| `year` | Release year |
+| `popularity` | Spotify popularity score (0–100) *(target variable)* |
+| `danceability` | Suitability for dancing (0–1) |
+| `energy` | Perceived intensity and activity (0–1) |
+| `valence` | Musical positivity or happiness (0–1) |
+| `tempo` | Beats per minute (BPM) |
 | `loudness` | Overall loudness (dB) |
-| `acousticness`, `instrumentalness`, `speechiness`, `liveness` | Audio texture features (0–1) |
-| `tempo` | Beats per minute |
-| `duration_ms`, `genre`, `year` | Track length, genre, release year |
+| `speechiness` | Presence of spoken words |
+| `acousticness` | Likelihood of being acoustic |
+| `instrumentalness` | Probability of containing no vocals |
+| `liveness` | Presence of a live audience |
+| `duration_ms` | Song duration in milliseconds |
+| `key` | Musical key |
+| `mode` | Major or minor scale |
+| `explicit` | Explicit lyrics indicator |
+| `id` | Spotify Track ID |
 
 Source: [Kaggle – Spotify Tracks Dataset](https://www.kaggle.com/datasets/maharshipandya/spotify-tracks-dataset)
 
-## Dashboard Pages
+---
 
-| Page | Purpose |
-|---|---|
-| 🏠 Home | Dataset KPIs and navigation |
-| 📊 Overview | Popularity distribution, correlation heatmap, feature stats |
-| 🎵 Song Explorer | Search tracks, radar chart of features, similar songs |
-| 🎤 Artist Analytics | Career trajectory, feature profiles, related artists |
-| 🎵 Genre Analytics | Genre comparison, distribution, evolution over time |
-| 📈 Trends | Feature evolution from the 1960s to present |
-| 🤖 Popularity Predictor | Real-time prediction with SHAP explanation |
+## 🖥️ Dashboard Pages
+
+### 🏠 Overview
+
+![Overview page](images/overview.png)
+
+**Purpose:** Landing page giving a high-level snapshot of the full dataset.
+
+**Features:**
+- Quick stats — total rows, columns, missing values, and memory usage
+- Popularity distribution histogram
+- Top 10 genres by average popularity
+- Interactive preview of the raw dataset with progress-bar formatting for popularity
+
+---
+
+### 🎵 Song Explorer
+
+![Song Explorer page](images/song_explorer.png)
+
+**Purpose:** Search, filter, and analyze individual tracks.
+
+**Features:**
+- Search by song name or artist, with year, popularity, and explicit-content filters
+- Live summary metrics (total songs, average popularity, danceability, energy) for the filtered selection
+- Popularity distribution with KDE overlay and mean marker
+- Danceability vs. energy scatter plot colored by popularity
+- Filterable, sortable data table (up to 1,000 rows)
+- CSV export of the filtered results
+
+---
+
+### 🎤 Artist Analytics
+
+![Artist Analytics page](images/artists.png)
+
+**Purpose:** Analyze and compare artist performance.
+
+**Features:**
+- Top 15 artists by average popularity
+- Side-by-side comparison of two artists with a radar chart of audio features
+- Automated summary of each artist's relative strengths
+- Popularity distribution across artists with key insights
+
+---
+
+### 🎼 Genre Analytics
+
+![Genre Analytics page](images/genres.png)
+
+**Purpose:** Compare and explore music genres.
+
+**Features:**
+- Top 20 genres by average popularity
+- Side-by-side genre comparison with audio feature breakdown and summary
+- Heatmap of audio features across genres
+- Genre-level energy vs. popularity scatter plot
+- Genre explorer table with CSV export
+
+---
+
+### 📈 Trends
+
+![Trends page](images/trends.png)
+
+**Purpose:** Explore how music has evolved over time.
+
+**Features:**
+- Year-over-year trend charts for selected audio features
+- Rolling averages to smooth out yearly noise
+- Year-over-year percentage change view
+- Combined multi-feature trend comparison
+- Key insights summary (e.g. loudness and energy shifts over the decades)
+
+---
+
+### 🤖 Popularity Predictor
+
+![Popularity Predictor page](images/predictor.png)
+
+**Purpose:** Predict a song's popularity from its audio features using the trained Random Forest model.
+
+**Features:**
+- Load a real example song as a starting point, or set all 14 audio features manually via sliders and dropdowns
+- Real-time popularity prediction with a gauge chart and confidence indicator
+- Song profile summary showing how each feature compares to typical ranges
+- Key insights explaining what's driving the predicted score
+
+---
 
 ## Machine Learning
 
@@ -86,9 +195,9 @@ Models evaluated:
 
 **Random Forest** was selected as the final model — best accuracy across all metrics, robust to non-linearity, and interpretable via feature importance. Hyperparameter tuning was performed using `GridSearchCV` to optimize the Random Forest model.
 
-### Explainable AI
+### Feature Importance
 
-The Random Forest feature importance analysis identified danceability, energy, loudness, valence, and acousticness as some of the most influential features used to predict song popularity. SHAP analysis was used to further explain both global feature importance and individual predictions.
+The Random Forest feature importance analysis identified danceability, energy, loudness, valence, and acousticness as some of the most influential features used to predict song popularity.
 
 ## Pipeline
 
@@ -111,9 +220,6 @@ Machine Learning
 Hyperparameter Tuning
       │
       ▼
-Explainable AI (SHAP)
-      │
-      ▼
 Streamlit Dashboard
       │
       ▼
@@ -128,7 +234,7 @@ spotify-analyse/
 ├── dashboard/                    # Streamlit app (app.py, pages/, components/)
 ├── data/                         # raw / processed / external datasets
 ├── models/                       # trained model, scaler, metadata
-├── notebooks/                    # EDA, feature engineering, training, SHAP
+├── notebooks/                    # EDA, feature engineering, training
 ├── src/                          # data, features, models, utils modules
 ├── tests/                        # unit tests
 ├── requirements.txt
@@ -175,7 +281,7 @@ GitHub Actions automatically validates the project by installing dependencies an
 
 ## Tech Stack
 
-**Data & ML:** Pandas, NumPy, Scikit-learn, SHAP
+**Data & ML:** Pandas, NumPy, Scikit-learn
 **Visualization:** Plotly, Matplotlib, Seaborn
 **Dashboard:** Streamlit
 **DevOps:** GitHub Actions, Pytest, Flake8
@@ -200,7 +306,7 @@ Licensed under the [MIT License](LICENSE).
 
 **Acelin Nazareth** — Data Science Student
 
-[GitHub](https://github.com/acelin009) · [LinkedIn](https://linkedin.com/in/acelin.nazareth) · [Email](mailto:acelin.nazareth@email.com)
+[GitHub](https://github.com/acelin009) · [LinkedIn](https://www.linkedin.com/in/acelin-nazareth-a7666a281/) · [Email](mailto:acelin.nazareth@email.com)
 
 ---
 
